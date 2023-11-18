@@ -3,12 +3,17 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "concurrently pnpm:dev:*",
+    "dev:next": "next dev",
+    "dev:codegen": "pnpm codegen --watch",
+    "build": "pnpm codegen && next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "codegen": "graphql-codegen"
   },
   "dependencies": {
+    "@graphql-codegen/cli": "^5.0.0",
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@urql/next": "^1.1.0",
     "graphql": "^16.8.1",
     "next": "14.0.3",
@@ -17,10 +22,15 @@
     "urql": "^4.0.6"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "5.0.0",
+    "@graphql-codegen/client-preset": "4.1.0",
+    "@next/env": "^14.0.3",
+    "@parcel/watcher": "^2.3.0",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
+    "concurrently": "^8.2.2",
     "eslint": "^8",
     "eslint-config-next": "14.0.3",
     "postcss": "^8",
