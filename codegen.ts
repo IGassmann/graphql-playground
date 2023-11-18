@@ -7,7 +7,10 @@ const config: CodegenConfig = {
   schema: process.env.RAILWAY_API_URL,
   documents: "src/**/*.tsx",
   generates: {
-    "src/gql/": { preset: "client" }
+    "src/gql/": {
+      preset: "client",
+      plugins: ['urql-introspection']
+    }
   }
 };
 
