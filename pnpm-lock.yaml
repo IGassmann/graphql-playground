@@ -14,6 +14,9 @@ dependencies:
   '@urql/exchange-graphcache':
     specifier: ^6.3.3
     version: 6.3.3(graphql@16.8.1)
+  '@urql/exchange-refocus':
+    specifier: ^1.0.2
+    version: 1.0.2(graphql@16.8.1)
   '@urql/next':
     specifier: ^1.1.0
     version: 1.1.0(next@14.0.3)(react@18.0.0)(urql@4.0.6)
@@ -1750,6 +1753,15 @@ packages:
     resolution: {integrity: sha512-uD8zzNIrxQHYCSgfIwYxzEmU1Ml4nJ6NTKwrDlpKmTLJa3aYuG3AoiO138HZBK1XGJ2QzV5yQPfcZsmbVFH8Yg==}
     dependencies:
       '@0no-co/graphql.web': 1.0.4(graphql@16.8.1)
+      '@urql/core': 4.2.0(graphql@16.8.1)
+      wonka: 6.3.4
+    transitivePeerDependencies:
+      - graphql
+    dev: false
+
+  /@urql/exchange-refocus@1.0.2(graphql@16.8.1):
+    resolution: {integrity: sha512-Lrsx33pGiC/cwysGvtE8c+ERUymZFq9pXUE40sivhLTHgMrHdKcinEFvjk9XgUb+6FtYw0d0DDJVe42KQZ5z1g==}
+    dependencies:
       '@urql/core': 4.2.0(graphql@16.8.1)
       wonka: 6.3.4
     transitivePeerDependencies:

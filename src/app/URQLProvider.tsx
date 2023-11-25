@@ -3,6 +3,7 @@
 import { UrqlProvider, ssrExchange, fetchExchange, createClient } from '@urql/next';
 import { cacheExchange } from '@urql/exchange-graphcache';
 import { relayPagination } from '@urql/exchange-graphcache/extras';
+import { refocusExchange } from '@urql/exchange-refocus';
 import schema from '@/gql/graphql';
 
 
@@ -29,7 +30,7 @@ export default function URQLProvider({ children }: URQLProviderProps) {
     const ssr = ssrExchange();
     const client = createClient({
       url: process.env.NEXT_PUBLIC_API_URL,
-      exchanges: [cache, ssr, fetchExchange],
+      exchanges: [refocusExchange(), cache, ssr, fetchExchange],
       suspense: true,
     });
 
