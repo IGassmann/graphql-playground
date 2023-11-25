@@ -1,7 +1,14 @@
-export default function Home() {
+import ProjectList from '@/app/ProjectList';
+import { Suspense } from 'react';
+
+export default async function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-6xl font-bold text-center">URQL SSR</h1>
+    <main className="min-h-screen flex-col items-center bg-gray-50 py-12 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-4xl">
+        <Suspense fallback={<p>Loading...</p>}>
+          <ProjectList />
+        </Suspense>
+      </div>
     </main>
   )
 }

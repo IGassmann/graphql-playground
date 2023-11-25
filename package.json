@@ -12,8 +12,8 @@
     "codegen": "graphql-codegen"
   },
   "dependencies": {
-    "@graphql-codegen/cli": "^5.0.0",
-    "@graphql-typed-document-node/core": "^3.2.0",
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
     "@urql/exchange-graphcache": "^6.3.3",
     "@urql/exchange-refocus": "^1.0.2",
     "@urql/next": "^1.1.0",
@@ -21,9 +21,11 @@
     "next": "14.0.3",
     "react": "^18",
     "react-dom": "^18",
+    "tailwind-merge": "^2.0.0",
     "urql": "^4.0.6"
   },
   "devDependencies": {
+    "@graphql-typed-document-node/core": "^3.2.0",
     "@graphql-codegen/cli": "5.0.0",
     "@graphql-codegen/client-preset": "4.1.0",
     "@graphql-codegen/urql-introspection": "^3.0.0",
