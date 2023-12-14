@@ -2,9 +2,9 @@ const { loadEnvConfig } = require('@next/env');
 
 loadEnvConfig(process.cwd())
 
-/** @type {import('graphql-config').GraphQLConfig} */
+/** @type {import('graphql-config').IGraphQLConfig} */
 const config = {
-  schema: process.env.RAILWAY_API_URL,
+  schema: process.env.API_URL,
   documents: "src/**/*.tsx",
   extensions: {
     codegen: {

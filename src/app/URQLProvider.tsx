@@ -21,8 +21,8 @@ export default function URQLProvider({ children }: URQLProviderProps) {
     const cache = cacheExchange({
       schema,
       resolvers: {
-        User: {
-          projects: relayPagination(),
+        Root: {
+          allStarships: relayPagination(),
         }
       }
     });

@@ -4,7 +4,7 @@ import type { CodegenConfig } from '@graphql-codegen/cli';
 loadEnvConfig(process.cwd())
 
 const config: CodegenConfig = {
-  schema: process.env.RAILWAY_API_URL,
+  schema: process.env.API_URL,
   documents: "src/**/*.tsx",
   generates: {
     "src/gql/": {
