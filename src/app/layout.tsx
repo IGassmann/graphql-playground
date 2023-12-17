@@ -1,4 +1,5 @@
 import URQLProvider from '@/app/URQLProvider';
+import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
@@ -17,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <URQLProvider>{children}</URQLProvider>
+        <ClerkProvider>
+          <URQLProvider>{children}</URQLProvider>
+        </ClerkProvider>
       </body>
     </html>
   )
