@@ -7,5 +7,5 @@ export default function StarshipNotFound() {
       <p>Could not find starship</p>
       <Link href="/public">Return Home</Link>
     </div>
-  )
+  );
 }

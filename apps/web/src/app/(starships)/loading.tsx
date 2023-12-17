@@ -3,5 +3,5 @@ export default function StarshipsLoading() {
     <div>
       <h2>Loading starships...</h2>
     </div>
-  )
+  );
 }

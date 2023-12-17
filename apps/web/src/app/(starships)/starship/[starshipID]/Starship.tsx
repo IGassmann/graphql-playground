@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import Pilot from "@/app/(starships)/starship/[starshipID]/Pilot";
-import { graphql } from "@/gql";
-import { useQuery } from "@urql/next";
-import { notFound } from "next/navigation";
+import { notFound } from 'next/navigation';
+import { useQuery } from '@urql/next';
+
+import Pilot from '@/app/(starships)/starship/[starshipID]/Pilot';
+import { graphql } from '@/gql';
 
 type StarshipProps = {
   starshipID: string;
@@ -29,14 +30,13 @@ const GetStarshipDocument = graphql(`
   }
 `);
 
-
 export default function Starship({ starshipID }: StarshipProps) {
   const [{ data, error, stale: isStale }] = useQuery({
     query: GetStarshipDocument,
     variables: { starshipID },
   });
 
-  if (error) throw new Error("Failed to load starship", { cause: error });
+  if (error) throw new Error('Failed to load starship', { cause: error });
 
   const starship = data?.starship;
 
@@ -47,9 +47,7 @@ export default function Starship({ starshipID }: StarshipProps) {
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-lg">
       <div className="px-4 py-6 sm:px-6">
-        <h3 className="text-base font-semibold leading-7 text-gray-900">
-          {starship.name}
-        </h3>
+        <h3 className="text-base font-semibold leading-7 text-gray-900">{starship.name}</h3>
         <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">
           Starship details and specifications
         </p>
@@ -88,9 +86,7 @@ export default function Starship({ starshipID }: StarshipProps) {
           </div>
           {pilots && pilots.length > 0 ? (
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
-              <dt className="text-sm font-medium leading-6 text-gray-900">
-                Pilots
-              </dt>
+              <dt className="text-sm font-medium leading-6 text-gray-900">Pilots</dt>
               <dd className="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
                 <ul
                   role="list"

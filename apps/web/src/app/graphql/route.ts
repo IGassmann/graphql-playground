@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 
-export const runtime = 'edge'
+export const runtime = 'edge';
 
 export async function POST(request: Request) {
-  if (!process.env.API_URL) throw new Error('Missing API_URL')
+  if (!process.env.API_URL) throw new Error('Missing API_URL');
 
-  const body = await request.json()
+  const body = await request.json();
 
   const response = await fetch(process.env.API_URL, {
     method: 'POST',
@@ -13,9 +13,9 @@ export async function POST(request: Request) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(body),
-  })
+  });
 
-  const data = await response.json()
+  const data = await response.json();
 
-  return NextResponse.json(data)
+  return NextResponse.json(data);
 }

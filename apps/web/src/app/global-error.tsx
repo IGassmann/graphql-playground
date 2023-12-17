@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
 type GlobalErrorProps = {
-  error: Error & { digest?: string }
-  reset: () => void
-}
+  error: Error & { digest?: string };
+  reset: () => void;
+};
 
-export default function GlobalError({ error, reset, }: GlobalErrorProps) {
+export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html>
       <body>
@@ -13,5 +13,5 @@ export default function GlobalError({ error, reset, }: GlobalErrorProps) {
         <button onClick={() => reset()}>Try again</button>
       </body>
     </html>
-  )
+  );
 }

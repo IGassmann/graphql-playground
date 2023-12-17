@@ -1,30 +1,28 @@
-"use client";
+'use client';
 
-import { UrqlProvider, ssrExchange, fetchExchange, createClient } from '@urql/next';
+import { useMemo } from 'react';
 import { cacheExchange } from '@urql/exchange-graphcache';
 import { relayPagination } from '@urql/exchange-graphcache/extras';
 import { refocusExchange } from '@urql/exchange-refocus';
+import { UrqlProvider, createClient, fetchExchange, ssrExchange } from '@urql/next';
+
 import schema from '@/gql/graphql';
-
-
-import { useMemo } from 'react';
-
 
 type URQLProviderProps = {
   children: React.ReactNode;
-}
+};
 
 export default function URQLProvider({ children }: URQLProviderProps) {
   const [client, ssr] = useMemo(() => {
-    if (!process.env.NEXT_PUBLIC_API_URL) throw new Error('Missing NEXT_PUBLIC_API_URL')
+    if (!process.env.NEXT_PUBLIC_API_URL) throw new Error('Missing NEXT_PUBLIC_API_URL');
 
     const cache = cacheExchange({
       schema,
       resolvers: {
         Root: {
           allStarships: relayPagination(),
-        }
-      }
+        },
+      },
     });
 
     const ssr = ssrExchange();

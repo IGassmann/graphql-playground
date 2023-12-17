@@ -1,17 +1,17 @@
-'use client'
+'use client';
 
-import { useEffect } from 'react'
+import { useEffect } from 'react';
 
 type StarshipsErrorProps = {
-  error: Error & { digest?: string }
-  reset: () => void
-}
+  error: Error & { digest?: string };
+  reset: () => void;
+};
 
 export default function StarshipsError({ error, reset }: StarshipsErrorProps) {
   useEffect(() => {
     // Log the error to an error reporting service
-    console.error(error)
-  }, [error])
+    console.error(error);
+  }, [error]);
 
   return (
     <div>
@@ -25,5 +25,5 @@ export default function StarshipsError({ error, reset }: StarshipsErrorProps) {
         Try again
       </button>
     </div>
-  )
+  );
 }

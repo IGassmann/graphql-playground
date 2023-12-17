@@ -3,5 +3,5 @@ export default function StarshipLoading() {
     <div>
       <p>Loading starship...</p>
     </div>
-  )
+  );
 }
