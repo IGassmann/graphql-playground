@@ -13,7 +13,9 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n    query GetStarships($first: Int!, $after: String) {\n        allStarships(first: $first, after: $after) {\n            edges {\n                node {\n                    id\n                    name\n                    model\n                    starshipClass\n                }\n            }\n            pageInfo {\n                hasPreviousPage\n                hasNextPage\n                endCursor\n                startCursor\n            }\n        }\n    }\n": types.GetStarshipsDocument,
+    "\n  query GetStarships($first: Int!, $after: String) {\n    allStarships(first: $first, after: $after) {\n      edges {\n        node {\n          id\n          name\n          model\n          starshipClass\n        }\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n    }\n  }\n": types.GetStarshipsDocument,
+    "\n  fragment PilotFragment on Person {\n    id\n    name\n    birthYear\n  }\n": types.PilotFragmentFragmentDoc,
+    "\n  query GetStarship($starshipID: ID!) {\n    starship(id: $starshipID) {\n      id\n      name\n      model\n      starshipClass\n      length\n      cargoCapacity\n      hyperdriveRating\n      pilotConnection {\n        pilots {\n          id\n          ...PilotFragment\n        }\n      }\n    }\n  }\n": types.GetStarshipDocument,
 };
 
 /**
@@ -33,7 +35,15 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n    query GetStarships($first: Int!, $after: String) {\n        allStarships(first: $first, after: $after) {\n            edges {\n                node {\n                    id\n                    name\n                    model\n                    starshipClass\n                }\n            }\n            pageInfo {\n                hasPreviousPage\n                hasNextPage\n                endCursor\n                startCursor\n            }\n        }\n    }\n"): (typeof documents)["\n    query GetStarships($first: Int!, $after: String) {\n        allStarships(first: $first, after: $after) {\n            edges {\n                node {\n                    id\n                    name\n                    model\n                    starshipClass\n                }\n            }\n            pageInfo {\n                hasPreviousPage\n                hasNextPage\n                endCursor\n                startCursor\n            }\n        }\n    }\n"];
+export function graphql(source: "\n  query GetStarships($first: Int!, $after: String) {\n    allStarships(first: $first, after: $after) {\n      edges {\n        node {\n          id\n          name\n          model\n          starshipClass\n        }\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetStarships($first: Int!, $after: String) {\n    allStarships(first: $first, after: $after) {\n      edges {\n        node {\n          id\n          name\n          model\n          starshipClass\n        }\n      }\n      pageInfo {\n        hasPreviousPage\n        hasNextPage\n        endCursor\n        startCursor\n      }\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  fragment PilotFragment on Person {\n    id\n    name\n    birthYear\n  }\n"): (typeof documents)["\n  fragment PilotFragment on Person {\n    id\n    name\n    birthYear\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  query GetStarship($starshipID: ID!) {\n    starship(id: $starshipID) {\n      id\n      name\n      model\n      starshipClass\n      length\n      cargoCapacity\n      hyperdriveRating\n      pilotConnection {\n        pilots {\n          id\n          ...PilotFragment\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetStarship($starshipID: ID!) {\n    starship(id: $starshipID) {\n      id\n      name\n      model\n      starshipClass\n      length\n      cargoCapacity\n      hyperdriveRating\n      pilotConnection {\n        pilots {\n          id\n          ...PilotFragment\n        }\n      }\n    }\n  }\n"];
 
 export function graphql(source: string) {
   return (documents as any)[source] ?? {};

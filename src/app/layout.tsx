@@ -19,7 +19,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ClerkProvider>
-          <URQLProvider>{children}</URQLProvider>
+          <URQLProvider>
+            {children}
+          </URQLProvider>
         </ClerkProvider>
       </body>
     </html>

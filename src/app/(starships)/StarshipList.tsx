@@ -2,30 +2,32 @@
 
 import { graphql } from '@/gql';
 import { useQuery } from '@urql/next';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { Fragment, useMemo, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react'
 import { EllipsisVerticalIcon } from '@heroicons/react/20/solid'
 import { twMerge } from 'tailwind-merge';
 
 const GetStarshipsDocument = graphql( `
-    query GetStarships($first: Int!, $after: String) {
-        allStarships(first: $first, after: $after) {
-            edges {
-                node {
-                    id
-                    name
-                    model
-                    starshipClass
-                }
-            }
-            pageInfo {
-                hasPreviousPage
-                hasNextPage
-                endCursor
-                startCursor
-            }
+  query GetStarships($first: Int!, $after: String) {
+    allStarships(first: $first, after: $after) {
+      edges {
+        node {
+          id
+          name
+          model
+          starshipClass
         }
+      }
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        endCursor
+        startCursor
+      }
     }
+  }
 `)
 
 
@@ -38,22 +40,31 @@ export default function StarshipList() {
       context: useMemo(() => ({ suspense: !after }), [after]),
     });
 
-  if (error) {
-     return <p>Oh no... {error.message}</p>
-  }
+  if (error) throw new Error("Failed to load starships", { cause: error });
 
   const starships = data?.allStarships;
+
+  if (!starships) notFound();
 
   return (
     <div className="bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl">
       <ul
         className={twMerge('divide-y divide-gray-100', isStale ? 'opacity-25' : '')}
       >
-        {starships?.edges?.map((starshipEdge) => {
+        {starships?.edges?.map((starshipEdge, index) => {
           const starship = starshipEdge?.node;
 
           if (!starship) {
-            throw new Error('Missing starship');
+            return (
+              <li
+                key={`failed-to-load-starship-${index}`}
+                className="flex items-center px-4 py-5 sm:px-6 opacity-60"
+              >
+                <p className="text-sm font-semibold leading-6 text-gray-900">
+                  Failed to load starship
+                </p>
+              </li>
+            );
           }
 
           return (
@@ -74,11 +85,11 @@ export default function StarshipList() {
                 </div>
               </div>
               <div className="flex flex-none items-center gap-x-4">
-                <a
+                <Link href={`/starship/${starship.id}`}
                   className="hidden rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:block"
                 >
                   View starship<span className="sr-only">, {starship.name}</span>
-                </a>
+                </Link>
                 <Menu as="div" className="relative flex-none">
                   <Menu.Button className="-m-2.5 block p-2.5 text-gray-500 hover:text-gray-900">
                     <span className="sr-only">Open options</span>
