@@ -3,7 +3,5 @@
 To run this server
 
 ```bash
-go run ./server/server.go
+go run ./server.go
 ```
-
-and open http://localhost:8080 in your browser
