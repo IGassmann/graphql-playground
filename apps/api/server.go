@@ -1,10 +1,16 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"fmt"
+	"github.com/99designs/gqlgen/graphql"
 	"github.com/peterhellberg/swapi"
+	"github.com/vektah/gqlparser/v2/gqlerror"
 	"log"
 	"net/http"
 	"os"
+	"runtime/debug"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
@@ -20,6 +26,27 @@ func main() {
 	}
 
 	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: graph.NewRootResolver(swapi.DefaultClient)}))
+
+	srv.SetRecoverFunc(func(ctx context.Context, err interface{}) error {
+		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stderr)
+
+		errStack := string(debug.Stack())
+		fmt.Fprintln(os.Stderr, errStack)
+
+		return graph.NewSystemError()
+	})
+	srv.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
+		var gqlErr *gqlerror.Error
+		// TODO: This doesn't work because all errors get already wrapped by gqlgen.ErrorOnPath. We need to declare our own custom error type and use that instead.
+		if !errors.As(err, &gqlErr) {
+			gqlErr = graph.NewSystemError()
+		}
+		if gqlErr.Path == nil {
+			gqlErr.Path = graphql.GetPath(ctx)
+		}
+		return gqlErr
+	})
 
 	http.Handle("/", playground.Handler("API", "/graphql"))
 	http.Handle("/graphql", srv)

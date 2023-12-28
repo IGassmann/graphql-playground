@@ -11,6 +11,6 @@ GraphQL client.
 - [ ] Implement StarshipPilotsConnection's resolver
 - [ ] Set up @defer
 - [ ] Have localized errors instead of failing a whole query
-- [ ] Separate user errors from unexpected errors
+- [ ] Model errors in the schema
 - [ ] Add filtering, sorting and searching
 - [ ] Add dataloader

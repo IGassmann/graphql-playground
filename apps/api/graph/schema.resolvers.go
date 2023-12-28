@@ -22,19 +22,16 @@ func (r *queryResolver) AllStarships(ctx context.Context, after *string, first *
 func (r *queryResolver) Starship(ctx context.Context, id string) (*model.Starship, error) {
 	starshipID, err := parseID(id)
 	if err != nil {
-		return nil, err
+		return nil, NewUserInputError(err.Error(), "id")
 	}
 
-	fmt.Println("starshipID", starshipID)
 	starship, err := r.swapiClient.Starship(ctx, starshipID)
-	fmt.Println("starship", starship)
 	if err != nil {
 		return nil, err
 	}
 
-	fmt.Println("starship.name", starship.Name)
 	if starship.URL == "" {
-		return nil, fmt.Errorf("starship not found: %v", id)
+		return nil, NewObjectNotFoundError("Starship not found.", "Starship", id)
 	}
 
 	var manufacturers []*string
@@ -110,17 +107,20 @@ type queryResolver struct{ *Resolver }
 //     it when you're done.
 //   - You have helper methods in this file. Move them out to keep these resolver files clean.
 func parseID(id string) (int, error) {
-	resourceID, err := strconv.Atoi(id)
+	objectID, err := strconv.Atoi(id)
 	if err != nil {
-		return 0, fmt.Errorf("Invalid id: %v", id)
+		return 0, fmt.Errorf("invalid ID: %s", id)
 	}
 
-	return resourceID, nil
+	return objectID, nil
 }
 func convertToFloat64(s string) (*float64, error) {
 	if s == "n/a" || s == "unknown" || s == "" {
 		return nil, nil
 	}
+
+	// Remove digit group separators
+	s = strings.ReplaceAll(s, ",", "")
 
 	f, err := strconv.ParseFloat(s, 64)
 	if err != nil {
@@ -133,6 +133,9 @@ func convertToInt(s string) (*int, error) {
 	if s == "n/a" || s == "unknown" || s == "" {
 		return nil, nil
 	}
+
+	// Remove digit group separators
+	s = strings.ReplaceAll(s, ",", "")
 
 	i, err := strconv.Atoi(s)
 	if err != nil {
