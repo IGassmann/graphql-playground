@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/peterhellberg/swapi"
 	"log"
 	"net/http"
 	"os"
@@ -18,7 +19,7 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: graph.NewRootResolver(swapi.DefaultClient)}))
 
 	http.Handle("/", playground.Handler("API", "/graphql"))
 	http.Handle("/graphql", srv)

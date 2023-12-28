@@ -7,6 +7,8 @@ package graph
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/IGassmann/graphql-playground/apps/api/graph/model"
 )
@@ -17,8 +19,78 @@ func (r *queryResolver) AllStarships(ctx context.Context, after *string, first *
 }
 
 // Starship is the resolver for the starship field.
-func (r *queryResolver) Starship(ctx context.Context, id *string) (*model.Starship, error) {
-	panic(fmt.Errorf("not implemented: Starship - starship"))
+func (r *queryResolver) Starship(ctx context.Context, id string) (*model.Starship, error) {
+	starshipID, err := parseID(id)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("starshipID", starshipID)
+	starship, err := r.swapiClient.Starship(ctx, starshipID)
+	fmt.Println("starship", starship)
+	if err != nil {
+		return nil, err
+	}
+
+	fmt.Println("starship.name", starship.Name)
+	if starship.URL == "" {
+		return nil, fmt.Errorf("starship not found: %v", id)
+	}
+
+	var manufacturers []*string
+	for _, manufacturer := range strings.Split(starship.Manufacturer, ",") {
+		m := strings.TrimSpace(manufacturer)
+		manufacturers = append(manufacturers, &m)
+	}
+
+	costInCredits, err := convertToFloat64(starship.CostInCredits)
+	if err != nil {
+		return nil, err
+	}
+
+	length, err := convertToFloat64(starship.Length)
+	if err != nil {
+		return nil, err
+	}
+
+	maxAtmospheringSpeed, err := convertToInt(starship.MaxAtmospheringSpeed)
+	if err != nil {
+		return nil, err
+	}
+
+	hyperdriveRating, err := convertToFloat64(starship.HyperdriveRating)
+	if err != nil {
+		return nil, err
+	}
+
+	mglt, err := convertToInt(starship.MGLT)
+	if err != nil {
+		return nil, err
+	}
+
+	cargoCapacity, err := convertToFloat64(starship.CargoCapacity)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.Starship{
+		ID:                   starship.URL,
+		Name:                 &starship.Name,
+		Model:                &starship.Model,
+		StarshipClass:        &starship.StarshipClass,
+		Manufacturers:        manufacturers,
+		CostInCredits:        costInCredits,
+		Length:               length,
+		Crew:                 &starship.Crew,
+		Passengers:           &starship.Passengers,
+		MaxAtmospheringSpeed: maxAtmospheringSpeed,
+		HyperdriveRating:     hyperdriveRating,
+		Mglt:                 mglt,
+		CargoCapacity:        cargoCapacity,
+		Consumables:          &starship.Consumables,
+		Created:              &starship.Created,
+		Edited:               &starship.Edited,
+	}, nil
 }
 
 // Node is the resolver for the node field.
@@ -30,3 +102,42 @@ func (r *queryResolver) Node(ctx context.Context, id string) (model.Node, error)
 func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func parseID(id string) (int, error) {
+	resourceID, err := strconv.Atoi(id)
+	if err != nil {
+		return 0, fmt.Errorf("Invalid id: %v", id)
+	}
+
+	return resourceID, nil
+}
+func convertToFloat64(s string) (*float64, error) {
+	if s == "n/a" || s == "unknown" || s == "" {
+		return nil, nil
+	}
+
+	f, err := strconv.ParseFloat(s, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	return &f, nil
+}
+func convertToInt(s string) (*int, error) {
+	if s == "n/a" || s == "unknown" || s == "" {
+		return nil, nil
+	}
+
+	i, err := strconv.Atoi(s)
+	if err != nil {
+		return nil, err
+	}
+
+	return &i, nil
+}

@@ -83,7 +83,7 @@ type ComplexityRoot struct {
 	Query struct {
 		AllStarships func(childComplexity int, after *string, first *int, before *string, last *int) int
 		Node         func(childComplexity int, id string) int
-		Starship     func(childComplexity int, id *string) int
+		Starship     func(childComplexity int, id string) int
 	}
 
 	Starship struct {
@@ -133,7 +133,7 @@ type ComplexityRoot struct {
 
 type QueryResolver interface {
 	AllStarships(ctx context.Context, after *string, first *int, before *string, last *int) (*model.StarshipsConnection, error)
-	Starship(ctx context.Context, id *string) (*model.Starship, error)
+	Starship(ctx context.Context, id string) (*model.Starship, error)
 	Node(ctx context.Context, id string) (model.Node, error)
 }
 
@@ -349,7 +349,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.Starship(childComplexity, args["id"].(*string)), true
+		return e.complexity.Query.Starship(childComplexity, args["id"].(string)), true
 
 	case "Starship.cargoCapacity":
 		if e.complexity.Starship.CargoCapacity == nil {
@@ -784,10 +784,10 @@ func (ec *executionContext) field_Query_node_args(ctx context.Context, rawArgs m
 func (ec *executionContext) field_Query_starship_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *string
+	var arg0 string
 	if tmp, ok := rawArgs["id"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
-		arg0, err = ec.unmarshalOID2ᚖstring(ctx, tmp)
+		arg0, err = ec.unmarshalNID2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1041,6 +1041,50 @@ func (ec *executionContext) fieldContext_PageInfo_endCursor(ctx context.Context,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Person_id(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Person_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Person_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Person",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -1518,50 +1562,6 @@ func (ec *executionContext) fieldContext_Person_edited(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Person_id(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Person_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Person_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Person",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _PersonStarshipsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.PersonStarshipsConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PersonStarshipsConnection_pageInfo(ctx, field)
 	if err != nil {
@@ -1740,6 +1740,8 @@ func (ec *executionContext) fieldContext_PersonStarshipsConnection_starships(ctx
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Starship_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Starship_name(ctx, field)
 			case "model":
@@ -1772,8 +1774,6 @@ func (ec *executionContext) fieldContext_PersonStarshipsConnection_starships(ctx
 				return ec.fieldContext_Starship_created(ctx, field)
 			case "edited":
 				return ec.fieldContext_Starship_edited(ctx, field)
-			case "id":
-				return ec.fieldContext_Starship_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -1817,6 +1817,8 @@ func (ec *executionContext) fieldContext_PersonStarshipsEdge_node(ctx context.Co
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Starship_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Starship_name(ctx, field)
 			case "model":
@@ -1849,8 +1851,6 @@ func (ec *executionContext) fieldContext_PersonStarshipsEdge_node(ctx context.Co
 				return ec.fieldContext_Starship_created(ctx, field)
 			case "edited":
 				return ec.fieldContext_Starship_edited(ctx, field)
-			case "id":
-				return ec.fieldContext_Starship_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -1978,7 +1978,7 @@ func (ec *executionContext) _Query_starship(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Query().Starship(rctx, fc.Args["id"].(*string))
+		return ec.resolvers.Query().Starship(rctx, fc.Args["id"].(string))
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2000,6 +2000,8 @@ func (ec *executionContext) fieldContext_Query_starship(ctx context.Context, fie
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Starship_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Starship_name(ctx, field)
 			case "model":
@@ -2032,8 +2034,6 @@ func (ec *executionContext) fieldContext_Query_starship(ctx context.Context, fie
 				return ec.fieldContext_Starship_created(ctx, field)
 			case "edited":
 				return ec.fieldContext_Starship_edited(ctx, field)
-			case "id":
-				return ec.fieldContext_Starship_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -2228,6 +2228,50 @@ func (ec *executionContext) fieldContext_Query___schema(ctx context.Context, fie
 				return ec.fieldContext___Schema_directives(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type __Schema", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Starship_id(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Starship_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNID2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Starship_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Starship",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2910,50 +2954,6 @@ func (ec *executionContext) fieldContext_Starship_edited(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Starship_id(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Starship_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNID2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Starship_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Starship",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _StarshipPilotsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.StarshipPilotsConnection) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_StarshipPilotsConnection_pageInfo(ctx, field)
 	if err != nil {
@@ -3132,6 +3132,8 @@ func (ec *executionContext) fieldContext_StarshipPilotsConnection_pilots(ctx con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Person_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Person_name(ctx, field)
 			case "birthYear":
@@ -3154,8 +3156,6 @@ func (ec *executionContext) fieldContext_StarshipPilotsConnection_pilots(ctx con
 				return ec.fieldContext_Person_created(ctx, field)
 			case "edited":
 				return ec.fieldContext_Person_edited(ctx, field)
-			case "id":
-				return ec.fieldContext_Person_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Person", field.Name)
 		},
@@ -3199,6 +3199,8 @@ func (ec *executionContext) fieldContext_StarshipPilotsEdge_node(ctx context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Person_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Person_name(ctx, field)
 			case "birthYear":
@@ -3221,8 +3223,6 @@ func (ec *executionContext) fieldContext_StarshipPilotsEdge_node(ctx context.Con
 				return ec.fieldContext_Person_created(ctx, field)
 			case "edited":
 				return ec.fieldContext_Person_edited(ctx, field)
-			case "id":
-				return ec.fieldContext_Person_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Person", field.Name)
 		},
@@ -3452,6 +3452,8 @@ func (ec *executionContext) fieldContext_StarshipsConnection_starships(ctx conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Starship_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Starship_name(ctx, field)
 			case "model":
@@ -3484,8 +3486,6 @@ func (ec *executionContext) fieldContext_StarshipsConnection_starships(ctx conte
 				return ec.fieldContext_Starship_created(ctx, field)
 			case "edited":
 				return ec.fieldContext_Starship_edited(ctx, field)
-			case "id":
-				return ec.fieldContext_Starship_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -3529,6 +3529,8 @@ func (ec *executionContext) fieldContext_StarshipsEdge_node(ctx context.Context,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "id":
+				return ec.fieldContext_Starship_id(ctx, field)
 			case "name":
 				return ec.fieldContext_Starship_name(ctx, field)
 			case "model":
@@ -3561,8 +3563,6 @@ func (ec *executionContext) fieldContext_StarshipsEdge_node(ctx context.Context,
 				return ec.fieldContext_Starship_created(ctx, field)
 			case "edited":
 				return ec.fieldContext_Starship_edited(ctx, field)
-			case "id":
-				return ec.fieldContext_Starship_id(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -5477,6 +5477,11 @@ func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, o
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Person")
+		case "id":
+			out.Values[i] = ec._Person_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "name":
 			out.Values[i] = ec._Person_name(ctx, field, obj)
 		case "birthYear":
@@ -5499,11 +5504,6 @@ func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Person_created(ctx, field, obj)
 		case "edited":
 			out.Values[i] = ec._Person_edited(ctx, field, obj)
-		case "id":
-			out.Values[i] = ec._Person_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5731,6 +5731,11 @@ func (ec *executionContext) _Starship(ctx context.Context, sel ast.SelectionSet,
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Starship")
+		case "id":
+			out.Values[i] = ec._Starship_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "name":
 			out.Values[i] = ec._Starship_name(ctx, field, obj)
 		case "model":
@@ -5763,11 +5768,6 @@ func (ec *executionContext) _Starship(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Starship_created(ctx, field, obj)
 		case "edited":
 			out.Values[i] = ec._Starship_edited(ctx, field, obj)
-		case "id":
-			out.Values[i] = ec._Starship_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6637,22 +6637,6 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	}
 	res := graphql.MarshalFloatContext(*v)
 	return graphql.WrapContextMarshaler(ctx, res)
-}
-
-func (ec *executionContext) unmarshalOID2ᚖstring(ctx context.Context, v interface{}) (*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := graphql.UnmarshalID(v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOID2ᚖstring(ctx context.Context, sel ast.SelectionSet, v *string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	res := graphql.MarshalID(*v)
-	return res
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

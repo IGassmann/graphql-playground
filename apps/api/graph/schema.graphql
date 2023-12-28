@@ -1,7 +1,7 @@
 "Root type for all query operations."
 type Query {
   allStarships(after: String, first: Int, before: String, last: Int): StarshipsConnection
-  starship(id: ID): Starship
+  starship(id: ID!): Starship
 
   "Fetches an object given its ID."
   node(
@@ -33,6 +33,9 @@ type PageInfo {
 
 "An individual person or character within the Star Wars universe."
 type Person implements Node {
+  "The ID of this person."
+  id: ID!
+
   "The name of this person."
   name: String
 
@@ -77,9 +80,6 @@ type Person implements Node {
 
   "The ISO 8601 date format of the time that this resource was edited."
   edited: String
-
-  "The ID of an object."
-  id: ID!
 }
 
 "A connection to a list of items."
@@ -120,6 +120,9 @@ type PersonStarshipsEdge {
 
 "A single transport craft that has hyperdrive capability."
 type Starship implements Node {
+  "The ID of this starship."
+  id: ID!
+
   "The name of this starship. The common name, such as “Death Star”."
   name: String
 
@@ -183,9 +186,6 @@ type Starship implements Node {
 
   "The ISO 8601 date format of the time that this resource was edited."
   edited: String
-
-  "The ID of an object."
-  id: ID!
 }
 
 "A connection to a list of items."

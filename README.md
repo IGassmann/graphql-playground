@@ -8,8 +8,9 @@ GraphQL client.
 
 ## TODO
 
-- [ ] Connect the app to the API
-- [ ] Move GraphQL Config to the root of the repository
+- [ ] Implement StarshipPilotsConnection's resolver
 - [ ] Set up @defer
 - [ ] Have localized errors instead of failing a whole query
 - [ ] Separate user errors from unexpected errors
+- [ ] Add filtering, sorting and searching
+- [ ] Add dataloader

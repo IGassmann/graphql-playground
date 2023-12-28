@@ -23,6 +23,8 @@ type PageInfo struct {
 
 // An individual person or character within the Star Wars universe.
 type Person struct {
+	// The ID of this person.
+	ID string `json:"id"`
 	// The name of this person.
 	Name *string `json:"name,omitempty"`
 	// The birth year of the person, using the in-universe standard of BBY or ABY -
@@ -49,8 +51,6 @@ type Person struct {
 	Created *string `json:"created,omitempty"`
 	// The ISO 8601 date format of the time that this resource was edited.
 	Edited *string `json:"edited,omitempty"`
-	// The ID of an object.
-	ID string `json:"id"`
 }
 
 func (Person) IsNode() {}
@@ -88,6 +88,8 @@ type PersonStarshipsEdge struct {
 
 // A single transport craft that has hyperdrive capability.
 type Starship struct {
+	// The ID of this starship.
+	ID string `json:"id"`
 	// The name of this starship. The common name, such as “Death Star”.
 	Name *string `json:"name,omitempty"`
 	// The model or official name of this starship. Such as "T-65 X-wing" or "DS-1
@@ -127,8 +129,6 @@ type Starship struct {
 	Created *string `json:"created,omitempty"`
 	// The ISO 8601 date format of the time that this resource was edited.
 	Edited *string `json:"edited,omitempty"`
-	// The ID of an object.
-	ID string `json:"id"`
 }
 
 func (Starship) IsNode() {}

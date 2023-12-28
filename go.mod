@@ -4,6 +4,7 @@ go 1.21.4
 
 require (
 	github.com/99designs/gqlgen v0.17.41
+	github.com/peterhellberg/swapi v0.0.0-20230222134402-c0bd79f5129c
 	github.com/vektah/gqlparser/v2 v2.5.10
 )
 
