@@ -45,12 +45,12 @@ type Person struct {
 	// The mass of the person in kilograms.
 	Mass *float64 `json:"mass,omitempty"`
 	// The skin color of this person.
-	SkinColor          *string                    `json:"skinColor,omitempty"`
-	StarshipConnection *PersonStarshipsConnection `json:"starshipConnection,omitempty"`
+	SkinColor          *string              `json:"skinColor,omitempty"`
+	StarshipConnection *StarshipsConnection `json:"starshipConnection,omitempty"`
 	// The ISO 8601 date format of the time that this resource was created.
-	Created *string `json:"created,omitempty"`
-	// The ISO 8601 date format of the time that this resource was edited.
-	Edited *string `json:"edited,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	// The ISO 8601 date format of the time that this resource was updated.
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 func (Person) IsNode() {}
@@ -59,11 +59,11 @@ func (Person) IsNode() {}
 func (this Person) GetID() string { return this.ID }
 
 // A connection to a list of items.
-type PersonStarshipsConnection struct {
+type PilotsConnection struct {
 	// Information to aid in pagination.
 	PageInfo *PageInfo `json:"pageInfo"`
 	// A list of edges.
-	Edges []*PersonStarshipsEdge `json:"edges,omitempty"`
+	Edges []*PilotsEdge `json:"edges,omitempty"`
 	// A count of the total number of objects in this connection, ignoring pagination.
 	// This allows a client to fetch the first five objects by passing "5" as the
 	// argument to "first", then fetch the total count so it could display "5 of 83",
@@ -75,13 +75,13 @@ type PersonStarshipsConnection struct {
 	// instead. Note that when clients like Relay need to fetch the "cursor" field on
 	// the edge to enable efficient pagination, this shortcut cannot be used, and the
 	// full "{ edges { node } }" version should be used instead.
-	Starships []*Starship `json:"starships,omitempty"`
+	Pilots []*Person `json:"pilots,omitempty"`
 }
 
 // An edge in a connection.
-type PersonStarshipsEdge struct {
+type PilotsEdge struct {
 	// The item at the end of the edge.
-	Node *Starship `json:"node,omitempty"`
+	Node *Person `json:"node,omitempty"`
 	// A cursor for use in pagination.
 	Cursor string `json:"cursor"`
 }
@@ -118,51 +118,23 @@ type Starship struct {
 	// within the Star Wars universe. This figure is only really useful for measuring
 	// the difference in speed of starships. We can assume it is similar to AU, the
 	// distance between our Sun (Sol) and Earth.
-	Mglt *int `json:"MGLT,omitempty"`
+	Mglt *int `json:"mglt,omitempty"`
 	// The maximum number of kilograms that this starship can transport.
 	CargoCapacity *float64 `json:"cargoCapacity,omitempty"`
 	// The maximum length of time that this starship can provide consumables for its
 	// entire crew without having to resupply.
-	Consumables     *string                   `json:"consumables,omitempty"`
-	PilotConnection *StarshipPilotsConnection `json:"pilotConnection,omitempty"`
+	Consumables     *string           `json:"consumables,omitempty"`
+	PilotConnection *PilotsConnection `json:"pilotConnection,omitempty"`
 	// The ISO 8601 date format of the time that this resource was created.
-	Created *string `json:"created,omitempty"`
-	// The ISO 8601 date format of the time that this resource was edited.
-	Edited *string `json:"edited,omitempty"`
+	CreatedAt *string `json:"createdAt,omitempty"`
+	// The ISO 8601 date format of the time that this resource was updated.
+	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
 
 func (Starship) IsNode() {}
 
 // The id of the object.
 func (this Starship) GetID() string { return this.ID }
-
-// A connection to a list of items.
-type StarshipPilotsConnection struct {
-	// Information to aid in pagination.
-	PageInfo *PageInfo `json:"pageInfo"`
-	// A list of edges.
-	Edges []*StarshipPilotsEdge `json:"edges,omitempty"`
-	// A count of the total number of objects in this connection, ignoring pagination.
-	// This allows a client to fetch the first five objects by passing "5" as the
-	// argument to "first", then fetch the total count so it could display "5 of 83",
-	// for example.
-	TotalCount *int `json:"totalCount,omitempty"`
-	// A list of all of the objects returned in the connection. This is a convenience
-	// field provided for quickly exploring the API; rather than querying for
-	// "{ edges { node } }" when no edge data is needed, this field can be be used
-	// instead. Note that when clients like Relay need to fetch the "cursor" field on
-	// the edge to enable efficient pagination, this shortcut cannot be used, and the
-	// full "{ edges { node } }" version should be used instead.
-	Pilots []*Person `json:"pilots,omitempty"`
-}
-
-// An edge in a connection.
-type StarshipPilotsEdge struct {
-	// The item at the end of the edge.
-	Node *Person `json:"node,omitempty"`
-	// A cursor for use in pagination.
-	Cursor string `json:"cursor"`
-}
 
 // A connection to a list of items.
 type StarshipsConnection struct {

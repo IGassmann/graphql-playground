@@ -85,8 +85,8 @@ func (r *queryResolver) Starship(ctx context.Context, id string) (*model.Starshi
 		Mglt:                 mglt,
 		CargoCapacity:        cargoCapacity,
 		Consumables:          &starship.Consumables,
-		Created:              &starship.Created,
-		Edited:               &starship.Edited,
+		CreatedAt:            &starship.Created,
+		UpdatedAt:            &starship.Edited,
 	}, nil
 }
 

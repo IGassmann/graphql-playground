@@ -55,8 +55,7 @@ type ComplexityRoot struct {
 
 	Person struct {
 		BirthYear          func(childComplexity int) int
-		Created            func(childComplexity int) int
-		Edited             func(childComplexity int) int
+		CreatedAt          func(childComplexity int) int
 		EyeColor           func(childComplexity int) int
 		Gender             func(childComplexity int) int
 		HairColor          func(childComplexity int) int
@@ -66,16 +65,17 @@ type ComplexityRoot struct {
 		Name               func(childComplexity int) int
 		SkinColor          func(childComplexity int) int
 		StarshipConnection func(childComplexity int, after *string, first *int, before *string, last *int) int
+		UpdatedAt          func(childComplexity int) int
 	}
 
-	PersonStarshipsConnection struct {
+	PilotsConnection struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
-		Starships  func(childComplexity int) int
+		Pilots     func(childComplexity int) int
 		TotalCount func(childComplexity int) int
 	}
 
-	PersonStarshipsEdge struct {
+	PilotsEdge struct {
 		Cursor func(childComplexity int) int
 		Node   func(childComplexity int) int
 	}
@@ -90,9 +90,8 @@ type ComplexityRoot struct {
 		CargoCapacity        func(childComplexity int) int
 		Consumables          func(childComplexity int) int
 		CostInCredits        func(childComplexity int) int
-		Created              func(childComplexity int) int
+		CreatedAt            func(childComplexity int) int
 		Crew                 func(childComplexity int) int
-		Edited               func(childComplexity int) int
 		HyperdriveRating     func(childComplexity int) int
 		ID                   func(childComplexity int) int
 		Length               func(childComplexity int) int
@@ -104,18 +103,7 @@ type ComplexityRoot struct {
 		Passengers           func(childComplexity int) int
 		PilotConnection      func(childComplexity int, after *string, first *int, before *string, last *int) int
 		StarshipClass        func(childComplexity int) int
-	}
-
-	StarshipPilotsConnection struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		Pilots     func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	StarshipPilotsEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
+		UpdatedAt            func(childComplexity int) int
 	}
 
 	StarshipsConnection struct {
@@ -191,19 +179,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Person.BirthYear(childComplexity), true
 
-	case "Person.created":
-		if e.complexity.Person.Created == nil {
+	case "Person.createdAt":
+		if e.complexity.Person.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Person.Created(childComplexity), true
-
-	case "Person.edited":
-		if e.complexity.Person.Edited == nil {
-			break
-		}
-
-		return e.complexity.Person.Edited(childComplexity), true
+		return e.complexity.Person.CreatedAt(childComplexity), true
 
 	case "Person.eyeColor":
 		if e.complexity.Person.EyeColor == nil {
@@ -273,47 +254,54 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Person.StarshipConnection(childComplexity, args["after"].(*string), args["first"].(*int), args["before"].(*string), args["last"].(*int)), true
 
-	case "PersonStarshipsConnection.edges":
-		if e.complexity.PersonStarshipsConnection.Edges == nil {
+	case "Person.updatedAt":
+		if e.complexity.Person.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.PersonStarshipsConnection.Edges(childComplexity), true
+		return e.complexity.Person.UpdatedAt(childComplexity), true
 
-	case "PersonStarshipsConnection.pageInfo":
-		if e.complexity.PersonStarshipsConnection.PageInfo == nil {
+	case "PilotsConnection.edges":
+		if e.complexity.PilotsConnection.Edges == nil {
 			break
 		}
 
-		return e.complexity.PersonStarshipsConnection.PageInfo(childComplexity), true
+		return e.complexity.PilotsConnection.Edges(childComplexity), true
 
-	case "PersonStarshipsConnection.starships":
-		if e.complexity.PersonStarshipsConnection.Starships == nil {
+	case "PilotsConnection.pageInfo":
+		if e.complexity.PilotsConnection.PageInfo == nil {
 			break
 		}
 
-		return e.complexity.PersonStarshipsConnection.Starships(childComplexity), true
+		return e.complexity.PilotsConnection.PageInfo(childComplexity), true
 
-	case "PersonStarshipsConnection.totalCount":
-		if e.complexity.PersonStarshipsConnection.TotalCount == nil {
+	case "PilotsConnection.pilots":
+		if e.complexity.PilotsConnection.Pilots == nil {
 			break
 		}
 
-		return e.complexity.PersonStarshipsConnection.TotalCount(childComplexity), true
+		return e.complexity.PilotsConnection.Pilots(childComplexity), true
 
-	case "PersonStarshipsEdge.cursor":
-		if e.complexity.PersonStarshipsEdge.Cursor == nil {
+	case "PilotsConnection.totalCount":
+		if e.complexity.PilotsConnection.TotalCount == nil {
 			break
 		}
 
-		return e.complexity.PersonStarshipsEdge.Cursor(childComplexity), true
+		return e.complexity.PilotsConnection.TotalCount(childComplexity), true
 
-	case "PersonStarshipsEdge.node":
-		if e.complexity.PersonStarshipsEdge.Node == nil {
+	case "PilotsEdge.cursor":
+		if e.complexity.PilotsEdge.Cursor == nil {
 			break
 		}
 
-		return e.complexity.PersonStarshipsEdge.Node(childComplexity), true
+		return e.complexity.PilotsEdge.Cursor(childComplexity), true
+
+	case "PilotsEdge.node":
+		if e.complexity.PilotsEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.PilotsEdge.Node(childComplexity), true
 
 	case "Query.allStarships":
 		if e.complexity.Query.AllStarships == nil {
@@ -372,12 +360,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Starship.CostInCredits(childComplexity), true
 
-	case "Starship.created":
-		if e.complexity.Starship.Created == nil {
+	case "Starship.createdAt":
+		if e.complexity.Starship.CreatedAt == nil {
 			break
 		}
 
-		return e.complexity.Starship.Created(childComplexity), true
+		return e.complexity.Starship.CreatedAt(childComplexity), true
 
 	case "Starship.crew":
 		if e.complexity.Starship.Crew == nil {
@@ -385,13 +373,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Starship.Crew(childComplexity), true
-
-	case "Starship.edited":
-		if e.complexity.Starship.Edited == nil {
-			break
-		}
-
-		return e.complexity.Starship.Edited(childComplexity), true
 
 	case "Starship.hyperdriveRating":
 		if e.complexity.Starship.HyperdriveRating == nil {
@@ -428,7 +409,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Starship.MaxAtmospheringSpeed(childComplexity), true
 
-	case "Starship.MGLT":
+	case "Starship.mglt":
 		if e.complexity.Starship.Mglt == nil {
 			break
 		}
@@ -475,47 +456,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Starship.StarshipClass(childComplexity), true
 
-	case "StarshipPilotsConnection.edges":
-		if e.complexity.StarshipPilotsConnection.Edges == nil {
+	case "Starship.updatedAt":
+		if e.complexity.Starship.UpdatedAt == nil {
 			break
 		}
 
-		return e.complexity.StarshipPilotsConnection.Edges(childComplexity), true
-
-	case "StarshipPilotsConnection.pageInfo":
-		if e.complexity.StarshipPilotsConnection.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.StarshipPilotsConnection.PageInfo(childComplexity), true
-
-	case "StarshipPilotsConnection.pilots":
-		if e.complexity.StarshipPilotsConnection.Pilots == nil {
-			break
-		}
-
-		return e.complexity.StarshipPilotsConnection.Pilots(childComplexity), true
-
-	case "StarshipPilotsConnection.totalCount":
-		if e.complexity.StarshipPilotsConnection.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.StarshipPilotsConnection.TotalCount(childComplexity), true
-
-	case "StarshipPilotsEdge.cursor":
-		if e.complexity.StarshipPilotsEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.StarshipPilotsEdge.Cursor(childComplexity), true
-
-	case "StarshipPilotsEdge.node":
-		if e.complexity.StarshipPilotsEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.StarshipPilotsEdge.Node(childComplexity), true
+		return e.complexity.Starship.UpdatedAt(childComplexity), true
 
 	case "StarshipsConnection.edges":
 		if e.complexity.StarshipsConnection.Edges == nil {
@@ -1441,9 +1387,9 @@ func (ec *executionContext) _Person_starshipConnection(ctx context.Context, fiel
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.PersonStarshipsConnection)
+	res := resTmp.(*model.StarshipsConnection)
 	fc.Result = res
-	return ec.marshalOPersonStarshipsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPersonStarshipsConnection(ctx, field.Selections, res)
+	return ec.marshalOStarshipsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipsConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Person_starshipConnection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1455,15 +1401,15 @@ func (ec *executionContext) fieldContext_Person_starshipConnection(ctx context.C
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "pageInfo":
-				return ec.fieldContext_PersonStarshipsConnection_pageInfo(ctx, field)
+				return ec.fieldContext_StarshipsConnection_pageInfo(ctx, field)
 			case "edges":
-				return ec.fieldContext_PersonStarshipsConnection_edges(ctx, field)
+				return ec.fieldContext_StarshipsConnection_edges(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_PersonStarshipsConnection_totalCount(ctx, field)
+				return ec.fieldContext_StarshipsConnection_totalCount(ctx, field)
 			case "starships":
-				return ec.fieldContext_PersonStarshipsConnection_starships(ctx, field)
+				return ec.fieldContext_StarshipsConnection_starships(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type PersonStarshipsConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type StarshipsConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -1480,8 +1426,8 @@ func (ec *executionContext) fieldContext_Person_starshipConnection(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _Person_created(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Person_created(ctx, field)
+func (ec *executionContext) _Person_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Person_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1494,7 +1440,7 @@ func (ec *executionContext) _Person_created(ctx context.Context, field graphql.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Created, nil
+		return obj.CreatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1508,7 +1454,7 @@ func (ec *executionContext) _Person_created(ctx context.Context, field graphql.C
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Person_created(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Person_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Person",
 		Field:      field,
@@ -1521,8 +1467,8 @@ func (ec *executionContext) fieldContext_Person_created(ctx context.Context, fie
 	return fc, nil
 }
 
-func (ec *executionContext) _Person_edited(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Person_edited(ctx, field)
+func (ec *executionContext) _Person_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Person) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Person_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1535,7 +1481,7 @@ func (ec *executionContext) _Person_edited(ctx context.Context, field graphql.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Edited, nil
+		return obj.UpdatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1549,7 +1495,7 @@ func (ec *executionContext) _Person_edited(ctx context.Context, field graphql.Co
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Person_edited(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Person_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Person",
 		Field:      field,
@@ -1562,8 +1508,8 @@ func (ec *executionContext) fieldContext_Person_edited(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonStarshipsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.PersonStarshipsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonStarshipsConnection_pageInfo(ctx, field)
+func (ec *executionContext) _PilotsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.PilotsConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PilotsConnection_pageInfo(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1593,9 +1539,9 @@ func (ec *executionContext) _PersonStarshipsConnection_pageInfo(ctx context.Cont
 	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPageInfo(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonStarshipsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PilotsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "PersonStarshipsConnection",
+		Object:     "PilotsConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1616,8 +1562,8 @@ func (ec *executionContext) fieldContext_PersonStarshipsConnection_pageInfo(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonStarshipsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *model.PersonStarshipsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonStarshipsConnection_edges(ctx, field)
+func (ec *executionContext) _PilotsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *model.PilotsConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PilotsConnection_edges(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1639,32 +1585,32 @@ func (ec *executionContext) _PersonStarshipsConnection_edges(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.PersonStarshipsEdge)
+	res := resTmp.([]*model.PilotsEdge)
 	fc.Result = res
-	return ec.marshalOPersonStarshipsEdge2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPersonStarshipsEdge(ctx, field.Selections, res)
+	return ec.marshalOPilotsEdge2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPilotsEdge(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonStarshipsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PilotsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "PersonStarshipsConnection",
+		Object:     "PilotsConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "node":
-				return ec.fieldContext_PersonStarshipsEdge_node(ctx, field)
+				return ec.fieldContext_PilotsEdge_node(ctx, field)
 			case "cursor":
-				return ec.fieldContext_PersonStarshipsEdge_cursor(ctx, field)
+				return ec.fieldContext_PilotsEdge_cursor(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type PersonStarshipsEdge", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type PilotsEdge", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonStarshipsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.PersonStarshipsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonStarshipsConnection_totalCount(ctx, field)
+func (ec *executionContext) _PilotsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.PilotsConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PilotsConnection_totalCount(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1691,9 +1637,9 @@ func (ec *executionContext) _PersonStarshipsConnection_totalCount(ctx context.Co
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonStarshipsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PilotsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "PersonStarshipsConnection",
+		Object:     "PilotsConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1704,8 +1650,8 @@ func (ec *executionContext) fieldContext_PersonStarshipsConnection_totalCount(ct
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonStarshipsConnection_starships(ctx context.Context, field graphql.CollectedField, obj *model.PersonStarshipsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonStarshipsConnection_starships(ctx, field)
+func (ec *executionContext) _PilotsConnection_pilots(ctx context.Context, field graphql.CollectedField, obj *model.PilotsConnection) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PilotsConnection_pilots(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1718,7 +1664,7 @@ func (ec *executionContext) _PersonStarshipsConnection_starships(ctx context.Con
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Starships, nil
+		return obj.Pilots, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1727,62 +1673,52 @@ func (ec *executionContext) _PersonStarshipsConnection_starships(ctx context.Con
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*model.Starship)
+	res := resTmp.([]*model.Person)
 	fc.Result = res
-	return ec.marshalOStarship2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarship(ctx, field.Selections, res)
+	return ec.marshalOPerson2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonStarshipsConnection_starships(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PilotsConnection_pilots(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "PersonStarshipsConnection",
+		Object:     "PilotsConnection",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Starship_id(ctx, field)
+				return ec.fieldContext_Person_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Starship_name(ctx, field)
-			case "model":
-				return ec.fieldContext_Starship_model(ctx, field)
-			case "starshipClass":
-				return ec.fieldContext_Starship_starshipClass(ctx, field)
-			case "manufacturers":
-				return ec.fieldContext_Starship_manufacturers(ctx, field)
-			case "costInCredits":
-				return ec.fieldContext_Starship_costInCredits(ctx, field)
-			case "length":
-				return ec.fieldContext_Starship_length(ctx, field)
-			case "crew":
-				return ec.fieldContext_Starship_crew(ctx, field)
-			case "passengers":
-				return ec.fieldContext_Starship_passengers(ctx, field)
-			case "maxAtmospheringSpeed":
-				return ec.fieldContext_Starship_maxAtmospheringSpeed(ctx, field)
-			case "hyperdriveRating":
-				return ec.fieldContext_Starship_hyperdriveRating(ctx, field)
-			case "MGLT":
-				return ec.fieldContext_Starship_MGLT(ctx, field)
-			case "cargoCapacity":
-				return ec.fieldContext_Starship_cargoCapacity(ctx, field)
-			case "consumables":
-				return ec.fieldContext_Starship_consumables(ctx, field)
-			case "pilotConnection":
-				return ec.fieldContext_Starship_pilotConnection(ctx, field)
-			case "created":
-				return ec.fieldContext_Starship_created(ctx, field)
-			case "edited":
-				return ec.fieldContext_Starship_edited(ctx, field)
+				return ec.fieldContext_Person_name(ctx, field)
+			case "birthYear":
+				return ec.fieldContext_Person_birthYear(ctx, field)
+			case "eyeColor":
+				return ec.fieldContext_Person_eyeColor(ctx, field)
+			case "gender":
+				return ec.fieldContext_Person_gender(ctx, field)
+			case "hairColor":
+				return ec.fieldContext_Person_hairColor(ctx, field)
+			case "height":
+				return ec.fieldContext_Person_height(ctx, field)
+			case "mass":
+				return ec.fieldContext_Person_mass(ctx, field)
+			case "skinColor":
+				return ec.fieldContext_Person_skinColor(ctx, field)
+			case "starshipConnection":
+				return ec.fieldContext_Person_starshipConnection(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Person_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Person_updatedAt(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Person", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonStarshipsEdge_node(ctx context.Context, field graphql.CollectedField, obj *model.PersonStarshipsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonStarshipsEdge_node(ctx, field)
+func (ec *executionContext) _PilotsEdge_node(ctx context.Context, field graphql.CollectedField, obj *model.PilotsEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PilotsEdge_node(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1804,62 +1740,52 @@ func (ec *executionContext) _PersonStarshipsEdge_node(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.Starship)
+	res := resTmp.(*model.Person)
 	fc.Result = res
-	return ec.marshalOStarship2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarship(ctx, field.Selections, res)
+	return ec.marshalOPerson2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonStarshipsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PilotsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "PersonStarshipsEdge",
+		Object:     "PilotsEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "id":
-				return ec.fieldContext_Starship_id(ctx, field)
+				return ec.fieldContext_Person_id(ctx, field)
 			case "name":
-				return ec.fieldContext_Starship_name(ctx, field)
-			case "model":
-				return ec.fieldContext_Starship_model(ctx, field)
-			case "starshipClass":
-				return ec.fieldContext_Starship_starshipClass(ctx, field)
-			case "manufacturers":
-				return ec.fieldContext_Starship_manufacturers(ctx, field)
-			case "costInCredits":
-				return ec.fieldContext_Starship_costInCredits(ctx, field)
-			case "length":
-				return ec.fieldContext_Starship_length(ctx, field)
-			case "crew":
-				return ec.fieldContext_Starship_crew(ctx, field)
-			case "passengers":
-				return ec.fieldContext_Starship_passengers(ctx, field)
-			case "maxAtmospheringSpeed":
-				return ec.fieldContext_Starship_maxAtmospheringSpeed(ctx, field)
-			case "hyperdriveRating":
-				return ec.fieldContext_Starship_hyperdriveRating(ctx, field)
-			case "MGLT":
-				return ec.fieldContext_Starship_MGLT(ctx, field)
-			case "cargoCapacity":
-				return ec.fieldContext_Starship_cargoCapacity(ctx, field)
-			case "consumables":
-				return ec.fieldContext_Starship_consumables(ctx, field)
-			case "pilotConnection":
-				return ec.fieldContext_Starship_pilotConnection(ctx, field)
-			case "created":
-				return ec.fieldContext_Starship_created(ctx, field)
-			case "edited":
-				return ec.fieldContext_Starship_edited(ctx, field)
+				return ec.fieldContext_Person_name(ctx, field)
+			case "birthYear":
+				return ec.fieldContext_Person_birthYear(ctx, field)
+			case "eyeColor":
+				return ec.fieldContext_Person_eyeColor(ctx, field)
+			case "gender":
+				return ec.fieldContext_Person_gender(ctx, field)
+			case "hairColor":
+				return ec.fieldContext_Person_hairColor(ctx, field)
+			case "height":
+				return ec.fieldContext_Person_height(ctx, field)
+			case "mass":
+				return ec.fieldContext_Person_mass(ctx, field)
+			case "skinColor":
+				return ec.fieldContext_Person_skinColor(ctx, field)
+			case "starshipConnection":
+				return ec.fieldContext_Person_starshipConnection(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Person_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Person_updatedAt(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Person", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _PersonStarshipsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.PersonStarshipsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_PersonStarshipsEdge_cursor(ctx, field)
+func (ec *executionContext) _PilotsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.PilotsEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_PilotsEdge_cursor(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1889,9 +1815,9 @@ func (ec *executionContext) _PersonStarshipsEdge_cursor(ctx context.Context, fie
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_PersonStarshipsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_PilotsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "PersonStarshipsEdge",
+		Object:     "PilotsEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -2022,18 +1948,18 @@ func (ec *executionContext) fieldContext_Query_starship(ctx context.Context, fie
 				return ec.fieldContext_Starship_maxAtmospheringSpeed(ctx, field)
 			case "hyperdriveRating":
 				return ec.fieldContext_Starship_hyperdriveRating(ctx, field)
-			case "MGLT":
-				return ec.fieldContext_Starship_MGLT(ctx, field)
+			case "mglt":
+				return ec.fieldContext_Starship_mglt(ctx, field)
 			case "cargoCapacity":
 				return ec.fieldContext_Starship_cargoCapacity(ctx, field)
 			case "consumables":
 				return ec.fieldContext_Starship_consumables(ctx, field)
 			case "pilotConnection":
 				return ec.fieldContext_Starship_pilotConnection(ctx, field)
-			case "created":
-				return ec.fieldContext_Starship_created(ctx, field)
-			case "edited":
-				return ec.fieldContext_Starship_edited(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Starship_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Starship_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -2687,8 +2613,8 @@ func (ec *executionContext) fieldContext_Starship_hyperdriveRating(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _Starship_MGLT(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Starship_MGLT(ctx, field)
+func (ec *executionContext) _Starship_mglt(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Starship_mglt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2715,7 +2641,7 @@ func (ec *executionContext) _Starship_MGLT(ctx context.Context, field graphql.Co
 	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Starship_MGLT(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Starship_mglt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Starship",
 		Field:      field,
@@ -2833,9 +2759,9 @@ func (ec *executionContext) _Starship_pilotConnection(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.StarshipPilotsConnection)
+	res := resTmp.(*model.PilotsConnection)
 	fc.Result = res
-	return ec.marshalOStarshipPilotsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipPilotsConnection(ctx, field.Selections, res)
+	return ec.marshalOPilotsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPilotsConnection(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Starship_pilotConnection(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -2847,15 +2773,15 @@ func (ec *executionContext) fieldContext_Starship_pilotConnection(ctx context.Co
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "pageInfo":
-				return ec.fieldContext_StarshipPilotsConnection_pageInfo(ctx, field)
+				return ec.fieldContext_PilotsConnection_pageInfo(ctx, field)
 			case "edges":
-				return ec.fieldContext_StarshipPilotsConnection_edges(ctx, field)
+				return ec.fieldContext_PilotsConnection_edges(ctx, field)
 			case "totalCount":
-				return ec.fieldContext_StarshipPilotsConnection_totalCount(ctx, field)
+				return ec.fieldContext_PilotsConnection_totalCount(ctx, field)
 			case "pilots":
-				return ec.fieldContext_StarshipPilotsConnection_pilots(ctx, field)
+				return ec.fieldContext_PilotsConnection_pilots(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type StarshipPilotsConnection", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type PilotsConnection", field.Name)
 		},
 	}
 	defer func() {
@@ -2872,8 +2798,8 @@ func (ec *executionContext) fieldContext_Starship_pilotConnection(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _Starship_created(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Starship_created(ctx, field)
+func (ec *executionContext) _Starship_createdAt(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Starship_createdAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2886,7 +2812,7 @@ func (ec *executionContext) _Starship_created(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Created, nil
+		return obj.CreatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2900,7 +2826,7 @@ func (ec *executionContext) _Starship_created(ctx context.Context, field graphql
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Starship_created(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Starship_createdAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Starship",
 		Field:      field,
@@ -2913,8 +2839,8 @@ func (ec *executionContext) fieldContext_Starship_created(ctx context.Context, f
 	return fc, nil
 }
 
-func (ec *executionContext) _Starship_edited(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Starship_edited(ctx, field)
+func (ec *executionContext) _Starship_updatedAt(ctx context.Context, field graphql.CollectedField, obj *model.Starship) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Starship_updatedAt(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2927,7 +2853,7 @@ func (ec *executionContext) _Starship_edited(ctx context.Context, field graphql.
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Edited, nil
+		return obj.UpdatedAt, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2941,329 +2867,9 @@ func (ec *executionContext) _Starship_edited(ctx context.Context, field graphql.
 	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Starship_edited(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Starship_updatedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Starship",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StarshipPilotsConnection_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.StarshipPilotsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StarshipPilotsConnection_pageInfo(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StarshipPilotsConnection_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StarshipPilotsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "hasNextPage":
-				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
-			case "hasPreviousPage":
-				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
-			case "startCursor":
-				return ec.fieldContext_PageInfo_startCursor(ctx, field)
-			case "endCursor":
-				return ec.fieldContext_PageInfo_endCursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StarshipPilotsConnection_edges(ctx context.Context, field graphql.CollectedField, obj *model.StarshipPilotsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StarshipPilotsConnection_edges(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.StarshipPilotsEdge)
-	fc.Result = res
-	return ec.marshalOStarshipPilotsEdge2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipPilotsEdge(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StarshipPilotsConnection_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StarshipPilotsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "node":
-				return ec.fieldContext_StarshipPilotsEdge_node(ctx, field)
-			case "cursor":
-				return ec.fieldContext_StarshipPilotsEdge_cursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type StarshipPilotsEdge", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StarshipPilotsConnection_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.StarshipPilotsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StarshipPilotsConnection_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*int)
-	fc.Result = res
-	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StarshipPilotsConnection_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StarshipPilotsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StarshipPilotsConnection_pilots(ctx context.Context, field graphql.CollectedField, obj *model.StarshipPilotsConnection) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StarshipPilotsConnection_pilots(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Pilots, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.Person)
-	fc.Result = res
-	return ec.marshalOPerson2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StarshipPilotsConnection_pilots(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StarshipPilotsConnection",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Person_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Person_name(ctx, field)
-			case "birthYear":
-				return ec.fieldContext_Person_birthYear(ctx, field)
-			case "eyeColor":
-				return ec.fieldContext_Person_eyeColor(ctx, field)
-			case "gender":
-				return ec.fieldContext_Person_gender(ctx, field)
-			case "hairColor":
-				return ec.fieldContext_Person_hairColor(ctx, field)
-			case "height":
-				return ec.fieldContext_Person_height(ctx, field)
-			case "mass":
-				return ec.fieldContext_Person_mass(ctx, field)
-			case "skinColor":
-				return ec.fieldContext_Person_skinColor(ctx, field)
-			case "starshipConnection":
-				return ec.fieldContext_Person_starshipConnection(ctx, field)
-			case "created":
-				return ec.fieldContext_Person_created(ctx, field)
-			case "edited":
-				return ec.fieldContext_Person_edited(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Person", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StarshipPilotsEdge_node(ctx context.Context, field graphql.CollectedField, obj *model.StarshipPilotsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StarshipPilotsEdge_node(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.Person)
-	fc.Result = res
-	return ec.marshalOPerson2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPerson(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StarshipPilotsEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StarshipPilotsEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "id":
-				return ec.fieldContext_Person_id(ctx, field)
-			case "name":
-				return ec.fieldContext_Person_name(ctx, field)
-			case "birthYear":
-				return ec.fieldContext_Person_birthYear(ctx, field)
-			case "eyeColor":
-				return ec.fieldContext_Person_eyeColor(ctx, field)
-			case "gender":
-				return ec.fieldContext_Person_gender(ctx, field)
-			case "hairColor":
-				return ec.fieldContext_Person_hairColor(ctx, field)
-			case "height":
-				return ec.fieldContext_Person_height(ctx, field)
-			case "mass":
-				return ec.fieldContext_Person_mass(ctx, field)
-			case "skinColor":
-				return ec.fieldContext_Person_skinColor(ctx, field)
-			case "starshipConnection":
-				return ec.fieldContext_Person_starshipConnection(ctx, field)
-			case "created":
-				return ec.fieldContext_Person_created(ctx, field)
-			case "edited":
-				return ec.fieldContext_Person_edited(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Person", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _StarshipPilotsEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.StarshipPilotsEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_StarshipPilotsEdge_cursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_StarshipPilotsEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "StarshipPilotsEdge",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -3474,18 +3080,18 @@ func (ec *executionContext) fieldContext_StarshipsConnection_starships(ctx conte
 				return ec.fieldContext_Starship_maxAtmospheringSpeed(ctx, field)
 			case "hyperdriveRating":
 				return ec.fieldContext_Starship_hyperdriveRating(ctx, field)
-			case "MGLT":
-				return ec.fieldContext_Starship_MGLT(ctx, field)
+			case "mglt":
+				return ec.fieldContext_Starship_mglt(ctx, field)
 			case "cargoCapacity":
 				return ec.fieldContext_Starship_cargoCapacity(ctx, field)
 			case "consumables":
 				return ec.fieldContext_Starship_consumables(ctx, field)
 			case "pilotConnection":
 				return ec.fieldContext_Starship_pilotConnection(ctx, field)
-			case "created":
-				return ec.fieldContext_Starship_created(ctx, field)
-			case "edited":
-				return ec.fieldContext_Starship_edited(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Starship_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Starship_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -3551,18 +3157,18 @@ func (ec *executionContext) fieldContext_StarshipsEdge_node(ctx context.Context,
 				return ec.fieldContext_Starship_maxAtmospheringSpeed(ctx, field)
 			case "hyperdriveRating":
 				return ec.fieldContext_Starship_hyperdriveRating(ctx, field)
-			case "MGLT":
-				return ec.fieldContext_Starship_MGLT(ctx, field)
+			case "mglt":
+				return ec.fieldContext_Starship_mglt(ctx, field)
 			case "cargoCapacity":
 				return ec.fieldContext_Starship_cargoCapacity(ctx, field)
 			case "consumables":
 				return ec.fieldContext_Starship_consumables(ctx, field)
 			case "pilotConnection":
 				return ec.fieldContext_Starship_pilotConnection(ctx, field)
-			case "created":
-				return ec.fieldContext_Starship_created(ctx, field)
-			case "edited":
-				return ec.fieldContext_Starship_edited(ctx, field)
+			case "createdAt":
+				return ec.fieldContext_Starship_createdAt(ctx, field)
+			case "updatedAt":
+				return ec.fieldContext_Starship_updatedAt(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Starship", field.Name)
 		},
@@ -5395,13 +5001,6 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 	switch obj := (obj).(type) {
 	case nil:
 		return graphql.Null
-	case model.Person:
-		return ec._Person(ctx, sel, &obj)
-	case *model.Person:
-		if obj == nil {
-			return graphql.Null
-		}
-		return ec._Person(ctx, sel, obj)
 	case model.Starship:
 		return ec._Starship(ctx, sel, &obj)
 	case *model.Starship:
@@ -5409,6 +5008,13 @@ func (ec *executionContext) _Node(ctx context.Context, sel ast.SelectionSet, obj
 			return graphql.Null
 		}
 		return ec._Starship(ctx, sel, obj)
+	case model.Person:
+		return ec._Person(ctx, sel, &obj)
+	case *model.Person:
+		if obj == nil {
+			return graphql.Null
+		}
+		return ec._Person(ctx, sel, obj)
 	default:
 		panic(fmt.Errorf("unexpected type %T", obj))
 	}
@@ -5500,10 +5106,10 @@ func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, o
 			out.Values[i] = ec._Person_skinColor(ctx, field, obj)
 		case "starshipConnection":
 			out.Values[i] = ec._Person_starshipConnection(ctx, field, obj)
-		case "created":
-			out.Values[i] = ec._Person_created(ctx, field, obj)
-		case "edited":
-			out.Values[i] = ec._Person_edited(ctx, field, obj)
+		case "createdAt":
+			out.Values[i] = ec._Person_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Person_updatedAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5527,28 +5133,28 @@ func (ec *executionContext) _Person(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
-var personStarshipsConnectionImplementors = []string{"PersonStarshipsConnection"}
+var pilotsConnectionImplementors = []string{"PilotsConnection"}
 
-func (ec *executionContext) _PersonStarshipsConnection(ctx context.Context, sel ast.SelectionSet, obj *model.PersonStarshipsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, personStarshipsConnectionImplementors)
+func (ec *executionContext) _PilotsConnection(ctx context.Context, sel ast.SelectionSet, obj *model.PilotsConnection) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pilotsConnectionImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("PersonStarshipsConnection")
+			out.Values[i] = graphql.MarshalString("PilotsConnection")
 		case "pageInfo":
-			out.Values[i] = ec._PersonStarshipsConnection_pageInfo(ctx, field, obj)
+			out.Values[i] = ec._PilotsConnection_pageInfo(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "edges":
-			out.Values[i] = ec._PersonStarshipsConnection_edges(ctx, field, obj)
+			out.Values[i] = ec._PilotsConnection_edges(ctx, field, obj)
 		case "totalCount":
-			out.Values[i] = ec._PersonStarshipsConnection_totalCount(ctx, field, obj)
-		case "starships":
-			out.Values[i] = ec._PersonStarshipsConnection_starships(ctx, field, obj)
+			out.Values[i] = ec._PilotsConnection_totalCount(ctx, field, obj)
+		case "pilots":
+			out.Values[i] = ec._PilotsConnection_pilots(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5572,21 +5178,21 @@ func (ec *executionContext) _PersonStarshipsConnection(ctx context.Context, sel 
 	return out
 }
 
-var personStarshipsEdgeImplementors = []string{"PersonStarshipsEdge"}
+var pilotsEdgeImplementors = []string{"PilotsEdge"}
 
-func (ec *executionContext) _PersonStarshipsEdge(ctx context.Context, sel ast.SelectionSet, obj *model.PersonStarshipsEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, personStarshipsEdgeImplementors)
+func (ec *executionContext) _PilotsEdge(ctx context.Context, sel ast.SelectionSet, obj *model.PilotsEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, pilotsEdgeImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("PersonStarshipsEdge")
+			out.Values[i] = graphql.MarshalString("PilotsEdge")
 		case "node":
-			out.Values[i] = ec._PersonStarshipsEdge_node(ctx, field, obj)
+			out.Values[i] = ec._PilotsEdge_node(ctx, field, obj)
 		case "cursor":
-			out.Values[i] = ec._PersonStarshipsEdge_cursor(ctx, field, obj)
+			out.Values[i] = ec._PilotsEdge_cursor(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -5756,104 +5362,18 @@ func (ec *executionContext) _Starship(ctx context.Context, sel ast.SelectionSet,
 			out.Values[i] = ec._Starship_maxAtmospheringSpeed(ctx, field, obj)
 		case "hyperdriveRating":
 			out.Values[i] = ec._Starship_hyperdriveRating(ctx, field, obj)
-		case "MGLT":
-			out.Values[i] = ec._Starship_MGLT(ctx, field, obj)
+		case "mglt":
+			out.Values[i] = ec._Starship_mglt(ctx, field, obj)
 		case "cargoCapacity":
 			out.Values[i] = ec._Starship_cargoCapacity(ctx, field, obj)
 		case "consumables":
 			out.Values[i] = ec._Starship_consumables(ctx, field, obj)
 		case "pilotConnection":
 			out.Values[i] = ec._Starship_pilotConnection(ctx, field, obj)
-		case "created":
-			out.Values[i] = ec._Starship_created(ctx, field, obj)
-		case "edited":
-			out.Values[i] = ec._Starship_edited(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var starshipPilotsConnectionImplementors = []string{"StarshipPilotsConnection"}
-
-func (ec *executionContext) _StarshipPilotsConnection(ctx context.Context, sel ast.SelectionSet, obj *model.StarshipPilotsConnection) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, starshipPilotsConnectionImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("StarshipPilotsConnection")
-		case "pageInfo":
-			out.Values[i] = ec._StarshipPilotsConnection_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "edges":
-			out.Values[i] = ec._StarshipPilotsConnection_edges(ctx, field, obj)
-		case "totalCount":
-			out.Values[i] = ec._StarshipPilotsConnection_totalCount(ctx, field, obj)
-		case "pilots":
-			out.Values[i] = ec._StarshipPilotsConnection_pilots(ctx, field, obj)
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var starshipPilotsEdgeImplementors = []string{"StarshipPilotsEdge"}
-
-func (ec *executionContext) _StarshipPilotsEdge(ctx context.Context, sel ast.SelectionSet, obj *model.StarshipPilotsEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, starshipPilotsEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("StarshipPilotsEdge")
-		case "node":
-			out.Values[i] = ec._StarshipPilotsEdge_node(ctx, field, obj)
-		case "cursor":
-			out.Values[i] = ec._StarshipPilotsEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
+		case "createdAt":
+			out.Values[i] = ec._Starship_createdAt(ctx, field, obj)
+		case "updatedAt":
+			out.Values[i] = ec._Starship_updatedAt(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6710,14 +6230,14 @@ func (ec *executionContext) marshalOPerson2ᚖgithubᚗcomᚋIGassmannᚋgraphql
 	return ec._Person(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPersonStarshipsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPersonStarshipsConnection(ctx context.Context, sel ast.SelectionSet, v *model.PersonStarshipsConnection) graphql.Marshaler {
+func (ec *executionContext) marshalOPilotsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPilotsConnection(ctx context.Context, sel ast.SelectionSet, v *model.PilotsConnection) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._PersonStarshipsConnection(ctx, sel, v)
+	return ec._PilotsConnection(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOPersonStarshipsEdge2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPersonStarshipsEdge(ctx context.Context, sel ast.SelectionSet, v []*model.PersonStarshipsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOPilotsEdge2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPilotsEdge(ctx context.Context, sel ast.SelectionSet, v []*model.PilotsEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -6744,7 +6264,7 @@ func (ec *executionContext) marshalOPersonStarshipsEdge2ᚕᚖgithubᚗcomᚋIGa
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOPersonStarshipsEdge2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPersonStarshipsEdge(ctx, sel, v[i])
+			ret[i] = ec.marshalOPilotsEdge2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPilotsEdge(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -6758,11 +6278,11 @@ func (ec *executionContext) marshalOPersonStarshipsEdge2ᚕᚖgithubᚗcomᚋIGa
 	return ret
 }
 
-func (ec *executionContext) marshalOPersonStarshipsEdge2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPersonStarshipsEdge(ctx context.Context, sel ast.SelectionSet, v *model.PersonStarshipsEdge) graphql.Marshaler {
+func (ec *executionContext) marshalOPilotsEdge2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐPilotsEdge(ctx context.Context, sel ast.SelectionSet, v *model.PilotsEdge) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._PersonStarshipsEdge(ctx, sel, v)
+	return ec._PilotsEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOStarship2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarship(ctx context.Context, sel ast.SelectionSet, v []*model.Starship) graphql.Marshaler {
@@ -6811,61 +6331,6 @@ func (ec *executionContext) marshalOStarship2ᚖgithubᚗcomᚋIGassmannᚋgraph
 		return graphql.Null
 	}
 	return ec._Starship(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOStarshipPilotsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipPilotsConnection(ctx context.Context, sel ast.SelectionSet, v *model.StarshipPilotsConnection) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._StarshipPilotsConnection(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOStarshipPilotsEdge2ᚕᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipPilotsEdge(ctx context.Context, sel ast.SelectionSet, v []*model.StarshipPilotsEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOStarshipPilotsEdge2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipPilotsEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOStarshipPilotsEdge2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipPilotsEdge(ctx context.Context, sel ast.SelectionSet, v *model.StarshipPilotsEdge) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._StarshipPilotsEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalOStarshipsConnection2ᚖgithubᚗcomᚋIGassmannᚋgraphqlᚑplaygroundᚋappsᚋapiᚋgraphᚋmodelᚐStarshipsConnection(ctx context.Context, sel ast.SelectionSet, v *model.StarshipsConnection) graphql.Marshaler {
