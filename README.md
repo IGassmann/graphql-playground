@@ -14,3 +14,4 @@ GraphQL client.
 - [ ] Model errors in the schema
 - [ ] Add filtering, sorting and searching
 - [ ] Add dataloader
+- [ ] Try out [GraphQLSP](https://github.com/0no-co/GraphQLSP)
