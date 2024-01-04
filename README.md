@@ -8,7 +8,6 @@ GraphQL client.
 
 ## TODO
 
-- [ ] Implement StarshipConnection's resolver
 - [ ] Set up @defer
 - [ ] Have localized errors instead of failing a whole query
 - [ ] Model errors in the schema

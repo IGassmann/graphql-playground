@@ -19,7 +19,7 @@ export default function URQLProvider({ children }: URQLProviderProps) {
     const cache = cacheExchange({
       schema,
       resolvers: {
-        Root: {
+        Query: {
           allStarships: relayPagination(),
         },
       },

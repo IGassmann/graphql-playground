@@ -5,7 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/99designs/gqlgen/graphql"
-	"github.com/peterhellberg/swapi"
+	"github.com/go-chi/chi"
+	"github.com/rs/cors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"log"
 	"net/http"
@@ -25,7 +26,13 @@ func main() {
 		port = defaultPort
 	}
 
-	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: graph.NewRootResolver(swapi.DefaultClient)}))
+	router := chi.NewRouter()
+
+	// Add CORS middleware around every request
+	// See https://github.com/rs/cors for full option listing
+	router.Use(cors.AllowAll().Handler)
+
+	srv := handler.NewDefaultServer(graph.NewExecutableSchema(graph.Config{Resolvers: graph.NewRootResolver()}))
 
 	srv.SetRecoverFunc(func(ctx context.Context, err interface{}) error {
 		fmt.Fprintln(os.Stderr, err)
@@ -48,9 +55,9 @@ func main() {
 		return gqlErr
 	})
 
-	http.Handle("/", playground.Handler("API", "/graphql"))
-	http.Handle("/graphql", srv)
+	router.Handle("/", playground.Handler("API", "/graphql"))
+	router.Handle("/graphql", srv)
 
 	log.Printf("connect to http://localhost:%s/ for API", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }

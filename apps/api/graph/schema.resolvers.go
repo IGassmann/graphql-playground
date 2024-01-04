@@ -6,88 +6,69 @@ package graph
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
-	"strconv"
-	"strings"
-
 	"github.com/IGassmann/graphql-playground/apps/api/graph/model"
+	"sort"
 )
 
 // AllStarships is the resolver for the allStarships field.
 func (r *queryResolver) AllStarships(ctx context.Context, after *string, first *int, before *string, last *int) (*model.StarshipsConnection, error) {
-	panic(fmt.Errorf("not implemented: AllStarships - allStarships"))
+	sortedStarships := make([]model.Starship, len(r.starships))
+	i := 0
+	for _, starship := range r.starships {
+		sortedStarships[i] = starship
+		i++
+	}
+	sort.Slice(sortedStarships, func(i, j int) bool {
+		return sortedStarships[i].ID < sortedStarships[j].ID
+	})
+
+	var allEdges []*model.StarshipsEdge
+	for _, starship := range sortedStarships {
+		starshipNode := starship
+		allEdges = append(allEdges, &model.StarshipsEdge{
+			Node:   &starshipNode,
+			Cursor: base64.StdEncoding.EncodeToString([]byte(starshipNode.ID)),
+		})
+	}
+
+	edges, err := edgesToReturn(allEdges, before, after, first, last)
+	if err != nil {
+		return nil, err
+	}
+
+	var nodes []*model.Starship
+	for _, edge := range edges {
+		nodes = append(nodes, edge.Node)
+	}
+
+	var startCursor *string
+	var endCursor *string
+	if len(edges) > 0 {
+		startCursor = &edges[0].Cursor
+		endCursor = &edges[len(edges)-1].Cursor
+	}
+
+	return &model.StarshipsConnection{
+		PageInfo: &model.PageInfo{
+			HasPreviousPage: hasPreviousPage(allEdges, before, after, first, last),
+			HasNextPage:     hasNextPage(allEdges, before, after, first, last),
+			StartCursor:     startCursor,
+			EndCursor:       endCursor,
+		},
+		Edges:      edges,
+		Starships:  nodes,
+		TotalCount: intPtr(len(r.starships)),
+	}, nil
 }
 
 // Starship is the resolver for the starship field.
 func (r *queryResolver) Starship(ctx context.Context, id string) (*model.Starship, error) {
-	starshipID, err := parseID(id)
-	if err != nil {
-		return nil, NewUserInputError(err.Error(), "id")
+	if s, ok := r.starships[id]; ok {
+		return &s, nil
 	}
-
-	starship, err := r.swapiClient.Starship(ctx, starshipID)
-	if err != nil {
-		return nil, err
-	}
-
-	if starship.URL == "" {
-		return nil, NewObjectNotFoundError("Starship not found.", "Starship", id)
-	}
-
-	var manufacturers []*string
-	for _, manufacturer := range strings.Split(starship.Manufacturer, ",") {
-		m := strings.TrimSpace(manufacturer)
-		manufacturers = append(manufacturers, &m)
-	}
-
-	costInCredits, err := convertToFloat64(starship.CostInCredits)
-	if err != nil {
-		return nil, err
-	}
-
-	length, err := convertToFloat64(starship.Length)
-	if err != nil {
-		return nil, err
-	}
-
-	maxAtmospheringSpeed, err := convertToInt(starship.MaxAtmospheringSpeed)
-	if err != nil {
-		return nil, err
-	}
-
-	hyperdriveRating, err := convertToFloat64(starship.HyperdriveRating)
-	if err != nil {
-		return nil, err
-	}
-
-	mglt, err := convertToInt(starship.MGLT)
-	if err != nil {
-		return nil, err
-	}
-
-	cargoCapacity, err := convertToFloat64(starship.CargoCapacity)
-	if err != nil {
-		return nil, err
-	}
-
-	return &model.Starship{
-		ID:                   starship.URL,
-		Name:                 &starship.Name,
-		Model:                &starship.Model,
-		StarshipClass:        &starship.StarshipClass,
-		Manufacturers:        manufacturers,
-		CostInCredits:        costInCredits,
-		Length:               length,
-		Crew:                 &starship.Crew,
-		Passengers:           &starship.Passengers,
-		MaxAtmospheringSpeed: maxAtmospheringSpeed,
-		HyperdriveRating:     hyperdriveRating,
-		Mglt:                 mglt,
-		CargoCapacity:        cargoCapacity,
-		Consumables:          &starship.Consumables,
-		CreatedAt:            &starship.Created,
-		UpdatedAt:            &starship.Edited,
-	}, nil
+	return nil, nil
 }
 
 // Node is the resolver for the node field.
@@ -100,47 +81,106 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
 
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func parseID(id string) (int, error) {
-	objectID, err := strconv.Atoi(id)
-	if err != nil {
-		return 0, fmt.Errorf("invalid ID: %s", id)
-	}
-
-	return objectID, nil
-}
-func convertToFloat64(s string) (*float64, error) {
-	if s == "n/a" || s == "unknown" || s == "" {
-		return nil, nil
-	}
-
-	// Remove digit group separators
-	s = strings.ReplaceAll(s, ",", "")
-
-	f, err := strconv.ParseFloat(s, 64)
+func edgesToReturn(allEdges []*model.StarshipsEdge, before *string, after *string, first *int, last *int) ([]*model.StarshipsEdge, error) {
+	edges, err := applyCursorsToEdges(allEdges, before, after)
 	if err != nil {
 		return nil, err
 	}
 
-	return &f, nil
+	if first != nil {
+		if *first < 0 {
+			return nil, fmt.Errorf("first must be positive")
+		}
+		if len(edges) > *first {
+			// Slice edges to be of length first by removing edges from the end of edges.
+			edges = edges[:*first]
+		}
+	}
+
+	if last != nil {
+		if *last < 0 {
+			return nil, fmt.Errorf("last must be positive")
+		}
+		if len(edges) > *last {
+			// Slice edges to be of length last by removing edges from the start of edges.
+			edges = edges[len(edges)-*last:]
+		}
+	}
+
+	return edges, nil
 }
-func convertToInt(s string) (*int, error) {
-	if s == "n/a" || s == "unknown" || s == "" {
-		return nil, nil
+
+func applyCursorsToEdges(allEdges []*model.StarshipsEdge, before *string, after *string) ([]*model.StarshipsEdge, error) {
+	edges := allEdges
+
+	var afterEdge *model.StarshipsEdge
+	if after != nil {
+		var afterIndex int
+		for i, edge := range allEdges {
+			if edge.Cursor == *after {
+				afterIndex = i
+				break
+			}
+		}
+		afterEdge = edges[afterIndex]
+
+		if afterEdge != nil {
+			// Remove all elements of edges before and including afterEdge.
+			edges = edges[afterIndex+1:]
+		}
 	}
 
-	// Remove digit group separators
-	s = strings.ReplaceAll(s, ",", "")
+	var beforeEdge *model.StarshipsEdge
+	if before != nil {
+		var beforeIndex int
+		for i, edge := range allEdges {
+			if edge.Cursor == *before {
+				beforeIndex = i
+				break
+			}
+		}
 
-	i, err := strconv.Atoi(s)
-	if err != nil {
-		return nil, err
+		beforeEdge = allEdges[beforeIndex]
+
+		if beforeEdge != nil {
+			// remove all elements of edges after and including beforeEdge.
+			edges = edges[:beforeIndex]
+		}
 	}
 
-	return &i, nil
+	return edges, nil
+}
+
+func hasPreviousPage(allEdges []*model.StarshipsEdge, before *string, after *string, first *int, last *int) bool {
+	if last != nil {
+		edges, err := applyCursorsToEdges(allEdges, before, after)
+		if err != nil {
+			return false
+		}
+
+		if len(edges) > *last {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	return false
+}
+
+func hasNextPage(allEdges []*model.StarshipsEdge, before *string, after *string, first *int, last *int) bool {
+	if first != nil {
+		edges, err := applyCursorsToEdges(allEdges, before, after)
+		if err != nil {
+			return false
+		}
+
+		if len(edges) > *first {
+			return true
+		} else {
+			return false
+		}
+	}
+
+	return false
 }
