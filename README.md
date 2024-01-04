@@ -8,9 +8,11 @@ GraphQL client.
 
 ## TODO
 
+- [ ] Implement Starship.pilots resolver
 - [ ] Set up @defer
 - [ ] Have localized errors instead of failing a whole query
 - [ ] Model errors in the schema
 - [ ] Add filtering, sorting and searching
-- [ ] Add dataloader
+- [ ] Move data to database
+- [ ] Use dataloader
 - [ ] Try out [GraphQLSP](https://github.com/0no-co/GraphQLSP)
