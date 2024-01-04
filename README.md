@@ -8,11 +8,15 @@ GraphQL client.
 
 ## TODO
 
+- [ ] Add filtering, sorting and searching
 - [ ] Implement Starship.pilots resolver
 - [ ] Set up @defer
-- [ ] Have localized errors instead of failing a whole query
-- [ ] Model errors in the schema
-- [ ] Add filtering, sorting and searching
+- [ ] Implement object identification
 - [ ] Move data to database
+- [ ] Add example of Union (`union SearchResult = Human | Droid | Starship`)
+- [ ] Add example of Interface (`interface Character`)
+- [ ] Add example of Enum (`enum LengthUnit`)
+- [ ] Model errors in the schema
+- [ ] Have localized errors instead of failing a whole query
 - [ ] Use dataloader
 - [ ] Try out [GraphQLSP](https://github.com/0no-co/GraphQLSP)
