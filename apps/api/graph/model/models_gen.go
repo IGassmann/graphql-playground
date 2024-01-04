@@ -21,13 +21,8 @@ type PageInfo struct {
 	EndCursor *string `json:"endCursor,omitempty"`
 }
 
-func (Person) IsNode() {}
-
-// The id of the object.
-func (this Person) GetID() string { return this.ID }
-
 // A connection to a list of items.
-type PilotsConnection struct {
+type PilotConnection struct {
 	// Information to aid in pagination.
 	PageInfo *PageInfo `json:"pageInfo"`
 	// A list of edges.
@@ -43,7 +38,7 @@ type PilotsConnection struct {
 	// instead. Note that when clients like Relay need to fetch the "cursor" field on
 	// the edge to enable efficient pagination, this shortcut cannot be used, and the
 	// full "{ edges { node } }" version should be used instead.
-	Pilots []*Person `json:"pilots,omitempty"`
+	Nodes []*Person `json:"nodes,omitempty"`
 }
 
 // An edge in a connection.
@@ -54,13 +49,8 @@ type PilotsEdge struct {
 	Cursor string `json:"cursor"`
 }
 
-func (Starship) IsNode() {}
-
-// The id of the object.
-func (this Starship) GetID() string { return this.ID }
-
 // A connection to a list of items.
-type StarshipsConnection struct {
+type StarshipConnection struct {
 	// Information to aid in pagination.
 	PageInfo *PageInfo `json:"pageInfo"`
 	// A list of edges.
@@ -76,7 +66,7 @@ type StarshipsConnection struct {
 	// instead. Note that when clients like Relay need to fetch the "cursor" field on
 	// the edge to enable efficient pagination, this shortcut cannot be used, and the
 	// full "{ edges { node } }" version should be used instead.
-	Starships []*Starship `json:"starships,omitempty"`
+	Nodes []*Starship `json:"nodes,omitempty"`
 }
 
 // An edge in a connection.

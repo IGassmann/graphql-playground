@@ -1,6 +1,6 @@
 "Root type for all query operations."
 type Query {
-  allStarships(after: String, first: Int, before: String, last: Int): StarshipsConnection
+  starships(after: String, first: Int, before: String, last: Int): StarshipConnection
   starship(id: ID!): Starship
 
   "Fetches an object given its ID."
@@ -32,7 +32,7 @@ type PageInfo {
 }
 
 "A connection to a list of items."
-type StarshipsConnection {
+type StarshipConnection {
   "Information to aid in pagination."
   pageInfo: PageInfo!
 
@@ -55,7 +55,7 @@ type StarshipsConnection {
   the edge to enable efficient pagination, this shortcut cannot be used, and the
   full "{ edges { node } }" version should be used instead.
   """
-  starships: [Starship]
+  nodes: [Starship]
 }
 
 "An edge in a connection."
@@ -129,7 +129,7 @@ type Starship implements Node {
   """
   consumables: String
 
-  pilotConnection(after: String, first: Int, before: String, last: Int): PilotsConnection
+  pilots(after: String, first: Int, before: String, last: Int): PilotConnection
 
   "The ISO 8601 date format of the time that this resource was created."
   createdAt: String
@@ -139,7 +139,7 @@ type Starship implements Node {
 }
 
 "A connection to a list of items."
-type PilotsConnection {
+type PilotConnection {
   "Information to aid in pagination."
   pageInfo: PageInfo!
 
@@ -162,7 +162,7 @@ type PilotsConnection {
   the edge to enable efficient pagination, this shortcut cannot be used, and the
   full "{ edges { node } }" version should be used instead.
   """
-  pilots: [Person]
+  nodes: [Person]
 }
 
 "An edge in a connection."
@@ -216,7 +216,7 @@ type Person implements Node {
   "The skin color of this person."
   skinColor: String
 
-  starshipConnection(after: String, first: Int, before: String, last: Int): StarshipsConnection
+  starships(after: String, first: Int, before: String, last: Int): StarshipConnection
 
   "The ISO 8601 date format of the time that this resource was created."
   createdAt: String

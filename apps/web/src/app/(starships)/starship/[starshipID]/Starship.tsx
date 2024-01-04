@@ -20,8 +20,8 @@ const GetStarshipDocument = graphql(`
       length
       cargoCapacity
       hyperdriveRating
-      pilotConnection {
-        pilots {
+      pilots {
+        nodes {
           id
           ...PilotFragment
         }
@@ -42,7 +42,7 @@ export default function Starship({ starshipID }: StarshipProps) {
 
   if (!starship) notFound();
 
-  const pilots = starship.pilotConnection?.pilots;
+  const pilots = starship.pilots?.nodes;
 
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-lg">

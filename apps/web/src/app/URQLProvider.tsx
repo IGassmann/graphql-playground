@@ -20,7 +20,7 @@ export default function URQLProvider({ children }: URQLProviderProps) {
       schema,
       resolvers: {
         Query: {
-          allStarships: relayPagination(),
+          starships: relayPagination(),
         },
       },
     });

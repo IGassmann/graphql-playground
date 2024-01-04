@@ -37,14 +37,19 @@ type Starship struct {
 	CargoCapacity *float64 `json:"cargoCapacity,omitempty"`
 	// The maximum length of time that this starship can provide consumables for its
 	// entire crew without having to resupply.
-	Consumables     *string `json:"consumables,omitempty"`
-	PilotIDs        []string
-	PilotConnection *PilotsConnection `json:"pilotConnection,omitempty"`
+	Consumables *string `json:"consumables,omitempty"`
+	PilotIDs    []string
+	Pilots      *PilotConnection `json:"pilots,omitempty"`
 	// The ISO 8601 date format of the time that this resource was created.
 	CreatedAt *string `json:"createdAt,omitempty"`
 	// The ISO 8601 date format of the time that this resource was updated.
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
+
+func (Starship) IsNode() {}
+
+// The id of the object.
+func (this Starship) GetID() string { return this.ID }
 
 // An individual person or character within the Star Wars universe.
 type Person struct {
@@ -70,11 +75,16 @@ type Person struct {
 	// The mass of the person in kilograms.
 	Mass *float64 `json:"mass,omitempty"`
 	// The skin color of this person.
-	SkinColor          *string `json:"skinColor,omitempty"`
-	StarshipIDs        []string
-	StarshipConnection *StarshipsConnection `json:"starshipConnection,omitempty"`
+	SkinColor   *string `json:"skinColor,omitempty"`
+	StarshipIDs []string
+	Starships   *StarshipConnection `json:"starships,omitempty"`
 	// The ISO 8601 date format of the time that this resource was created.
 	CreatedAt *string `json:"createdAt,omitempty"`
 	// The ISO 8601 date format of the time that this resource was updated.
 	UpdatedAt *string `json:"updatedAt,omitempty"`
 }
+
+func (Person) IsNode() {}
+
+// The id of the object.
+func (this Person) GetID() string { return this.ID }

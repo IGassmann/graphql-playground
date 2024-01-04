@@ -71,14 +71,14 @@ export type Person = Node & {
   name?: Maybe<Scalars['String']['output']>;
   /** The skin color of this person. */
   skinColor?: Maybe<Scalars['String']['output']>;
-  starshipConnection?: Maybe<StarshipsConnection>;
+  starships?: Maybe<StarshipConnection>;
   /** The ISO 8601 date format of the time that this resource was updated. */
   updatedAt?: Maybe<Scalars['String']['output']>;
 };
 
 
 /** An individual person or character within the Star Wars universe. */
-export type PersonStarshipConnectionArgs = {
+export type PersonStarshipsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -86,12 +86,10 @@ export type PersonStarshipConnectionArgs = {
 };
 
 /** A connection to a list of items. */
-export type PilotsConnection = {
-  __typename?: 'PilotsConnection';
+export type PilotConnection = {
+  __typename?: 'PilotConnection';
   /** A list of edges. */
   edges?: Maybe<Array<Maybe<PilotsEdge>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
   /**
    * A list of all of the objects returned in the connection. This is a convenience
    * field provided for quickly exploring the API; rather than querying for
@@ -100,7 +98,9 @@ export type PilotsConnection = {
    * the edge to enable efficient pagination, this shortcut cannot be used, and the
    * full "{ edges { node } }" version should be used instead.
    */
-  pilots?: Maybe<Array<Maybe<Person>>>;
+  nodes?: Maybe<Array<Maybe<Person>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
   /**
    * A count of the total number of objects in this connection, ignoring pagination.
    * This allows a client to fetch the first five objects by passing "5" as the
@@ -122,19 +122,10 @@ export type PilotsEdge = {
 /** Root type for all query operations. */
 export type Query = {
   __typename?: 'Query';
-  allStarships?: Maybe<StarshipsConnection>;
   /** Fetches an object given its ID. */
   node?: Maybe<Node>;
   starship?: Maybe<Starship>;
-};
-
-
-/** Root type for all query operations. */
-export type QueryAllStarshipsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  before?: InputMaybe<Scalars['String']['input']>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  last?: InputMaybe<Scalars['Int']['input']>;
+  starships?: Maybe<StarshipConnection>;
 };
 
 
@@ -147,6 +138,15 @@ export type QueryNodeArgs = {
 /** Root type for all query operations. */
 export type QueryStarshipArgs = {
   id: Scalars['ID']['input'];
+};
+
+
+/** Root type for all query operations. */
+export type QueryStarshipsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  before?: InputMaybe<Scalars['String']['input']>;
+  first?: InputMaybe<Scalars['Int']['input']>;
+  last?: InputMaybe<Scalars['Int']['input']>;
 };
 
 /** A single transport craft that has hyperdrive capability. */
@@ -195,7 +195,7 @@ export type Starship = Node & {
   name?: Maybe<Scalars['String']['output']>;
   /** The number of non-essential people this starship can transport. */
   passengers?: Maybe<Scalars['String']['output']>;
-  pilotConnection?: Maybe<PilotsConnection>;
+  pilots?: Maybe<PilotConnection>;
   /**
    * The class of this starship, such as "Starfighter" or "Deep Space Mobile
    * Battlestation"
@@ -207,7 +207,7 @@ export type Starship = Node & {
 
 
 /** A single transport craft that has hyperdrive capability. */
-export type StarshipPilotConnectionArgs = {
+export type StarshipPilotsArgs = {
   after?: InputMaybe<Scalars['String']['input']>;
   before?: InputMaybe<Scalars['String']['input']>;
   first?: InputMaybe<Scalars['Int']['input']>;
@@ -215,12 +215,10 @@ export type StarshipPilotConnectionArgs = {
 };
 
 /** A connection to a list of items. */
-export type StarshipsConnection = {
-  __typename?: 'StarshipsConnection';
+export type StarshipConnection = {
+  __typename?: 'StarshipConnection';
   /** A list of edges. */
   edges?: Maybe<Array<Maybe<StarshipsEdge>>>;
-  /** Information to aid in pagination. */
-  pageInfo: PageInfo;
   /**
    * A list of all of the objects returned in the connection. This is a convenience
    * field provided for quickly exploring the API; rather than querying for
@@ -229,7 +227,9 @@ export type StarshipsConnection = {
    * the edge to enable efficient pagination, this shortcut cannot be used, and the
    * full "{ edges { node } }" version should be used instead.
    */
-  starships?: Maybe<Array<Maybe<Starship>>>;
+  nodes?: Maybe<Array<Maybe<Starship>>>;
+  /** Information to aid in pagination. */
+  pageInfo: PageInfo;
   /**
    * A count of the total number of objects in this connection, ignoring pagination.
    * This allows a client to fetch the first five objects by passing "5" as the
@@ -254,7 +254,7 @@ export type GetStarshipsQueryVariables = Exact<{
 }>;
 
 
-export type GetStarshipsQuery = { __typename?: 'Query', allStarships?: { __typename?: 'StarshipsConnection', edges?: Array<{ __typename?: 'StarshipsEdge', node?: { __typename?: 'Starship', id: string, name?: string | null, model?: string | null, starshipClass?: string | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, endCursor?: string | null, startCursor?: string | null } } | null };
+export type GetStarshipsQuery = { __typename?: 'Query', starships?: { __typename?: 'StarshipConnection', edges?: Array<{ __typename?: 'StarshipsEdge', node?: { __typename?: 'Starship', id: string, name?: string | null, model?: string | null, starshipClass?: string | null } | null } | null> | null, pageInfo: { __typename?: 'PageInfo', hasPreviousPage: boolean, hasNextPage: boolean, endCursor?: string | null, startCursor?: string | null } } | null };
 
 export type PilotFragmentFragment = { __typename?: 'Person', id: string, name?: string | null, birthYear?: string | null } & { ' $fragmentName'?: 'PilotFragmentFragment' };
 
@@ -263,14 +263,14 @@ export type GetStarshipQueryVariables = Exact<{
 }>;
 
 
-export type GetStarshipQuery = { __typename?: 'Query', starship?: { __typename?: 'Starship', id: string, name?: string | null, model?: string | null, starshipClass?: string | null, length?: number | null, cargoCapacity?: number | null, hyperdriveRating?: number | null, pilotConnection?: { __typename?: 'PilotsConnection', pilots?: Array<(
+export type GetStarshipQuery = { __typename?: 'Query', starship?: { __typename?: 'Starship', id: string, name?: string | null, model?: string | null, starshipClass?: string | null, length?: number | null, cargoCapacity?: number | null, hyperdriveRating?: number | null, pilots?: { __typename?: 'PilotConnection', nodes?: Array<(
         { __typename?: 'Person', id: string }
         & { ' $fragmentRefs'?: { 'PilotFragmentFragment': PilotFragmentFragment } }
       ) | null> | null } | null } | null };
 
 export const PilotFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PilotFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Person"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"birthYear"}}]}}]} as unknown as DocumentNode<PilotFragmentFragment, unknown>;
-export const GetStarshipsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStarships"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"allStarships"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"model"}},{"kind":"Field","name":{"kind":"Name","value":"starshipClass"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}}]}}]}}]}}]} as unknown as DocumentNode<GetStarshipsQuery, GetStarshipsQueryVariables>;
-export const GetStarshipDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStarship"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"starshipID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"starship"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"starshipID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"model"}},{"kind":"Field","name":{"kind":"Name","value":"starshipClass"}},{"kind":"Field","name":{"kind":"Name","value":"length"}},{"kind":"Field","name":{"kind":"Name","value":"cargoCapacity"}},{"kind":"Field","name":{"kind":"Name","value":"hyperdriveRating"}},{"kind":"Field","name":{"kind":"Name","value":"pilotConnection"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"pilots"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PilotFragment"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PilotFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Person"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"birthYear"}}]}}]} as unknown as DocumentNode<GetStarshipQuery, GetStarshipQueryVariables>;
+export const GetStarshipsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStarships"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"first"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"after"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"starships"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"first"},"value":{"kind":"Variable","name":{"kind":"Name","value":"first"}}},{"kind":"Argument","name":{"kind":"Name","value":"after"},"value":{"kind":"Variable","name":{"kind":"Name","value":"after"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edges"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"node"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"model"}},{"kind":"Field","name":{"kind":"Name","value":"starshipClass"}}]}}]}},{"kind":"Field","name":{"kind":"Name","value":"pageInfo"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"hasPreviousPage"}},{"kind":"Field","name":{"kind":"Name","value":"hasNextPage"}},{"kind":"Field","name":{"kind":"Name","value":"endCursor"}},{"kind":"Field","name":{"kind":"Name","value":"startCursor"}}]}}]}}]}}]} as unknown as DocumentNode<GetStarshipsQuery, GetStarshipsQueryVariables>;
+export const GetStarshipDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetStarship"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"starshipID"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"starship"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"starshipID"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"model"}},{"kind":"Field","name":{"kind":"Name","value":"starshipClass"}},{"kind":"Field","name":{"kind":"Name","value":"length"}},{"kind":"Field","name":{"kind":"Name","value":"cargoCapacity"}},{"kind":"Field","name":{"kind":"Name","value":"hyperdriveRating"}},{"kind":"Field","name":{"kind":"Name","value":"pilots"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nodes"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PilotFragment"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PilotFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Person"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"birthYear"}}]}}]} as unknown as DocumentNode<GetStarshipQuery, GetStarshipQueryVariables>;
 import { IntrospectionQuery } from 'graphql';
 export default {
   "__schema": {
@@ -441,10 +441,10 @@ export default {
             "args": []
           },
           {
-            "name": "starshipConnection",
+            "name": "starships",
             "type": {
               "kind": "OBJECT",
-              "name": "StarshipsConnection",
+              "name": "StarshipConnection",
               "ofType": null
             },
             "args": [
@@ -496,7 +496,7 @@ export default {
       },
       {
         "kind": "OBJECT",
-        "name": "PilotsConnection",
+        "name": "PilotConnection",
         "fields": [
           {
             "name": "edges",
@@ -511,24 +511,24 @@ export default {
             "args": []
           },
           {
-            "name": "pageInfo",
+            "name": "nodes",
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PageInfo",
+                "name": "Person",
                 "ofType": null
               }
             },
             "args": []
           },
           {
-            "name": "pilots",
+            "name": "pageInfo",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Person",
+                "name": "PageInfo",
                 "ofType": null
               }
             },
@@ -577,44 +577,6 @@ export default {
         "name": "Query",
         "fields": [
           {
-            "name": "allStarships",
-            "type": {
-              "kind": "OBJECT",
-              "name": "StarshipsConnection",
-              "ofType": null
-            },
-            "args": [
-              {
-                "name": "after",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "before",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "first",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              },
-              {
-                "name": "last",
-                "type": {
-                  "kind": "SCALAR",
-                  "name": "Any"
-                }
-              }
-            ]
-          },
-          {
             "name": "node",
             "type": {
               "kind": "INTERFACE",
@@ -650,6 +612,44 @@ export default {
                     "kind": "SCALAR",
                     "name": "Any"
                   }
+                }
+              }
+            ]
+          },
+          {
+            "name": "starships",
+            "type": {
+              "kind": "OBJECT",
+              "name": "StarshipConnection",
+              "ofType": null
+            },
+            "args": [
+              {
+                "name": "after",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "before",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "first",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
+                }
+              },
+              {
+                "name": "last",
+                "type": {
+                  "kind": "SCALAR",
+                  "name": "Any"
                 }
               }
             ]
@@ -780,10 +780,10 @@ export default {
             "args": []
           },
           {
-            "name": "pilotConnection",
+            "name": "pilots",
             "type": {
               "kind": "OBJECT",
-              "name": "PilotsConnection",
+              "name": "PilotConnection",
               "ofType": null
             },
             "args": [
@@ -843,7 +843,7 @@ export default {
       },
       {
         "kind": "OBJECT",
-        "name": "StarshipsConnection",
+        "name": "StarshipConnection",
         "fields": [
           {
             "name": "edges",
@@ -858,24 +858,24 @@ export default {
             "args": []
           },
           {
-            "name": "pageInfo",
+            "name": "nodes",
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PageInfo",
+                "name": "Starship",
                 "ofType": null
               }
             },
             "args": []
           },
           {
-            "name": "starships",
+            "name": "pageInfo",
             "type": {
-              "kind": "LIST",
+              "kind": "NON_NULL",
               "ofType": {
                 "kind": "OBJECT",
-                "name": "Starship",
+                "name": "PageInfo",
                 "ofType": null
               }
             },

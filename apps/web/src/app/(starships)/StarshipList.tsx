@@ -12,7 +12,7 @@ import { graphql } from '@/gql';
 
 const GetStarshipsDocument = graphql(`
   query GetStarships($first: Int!, $after: String) {
-    allStarships(first: $first, after: $after) {
+    starships(first: $first, after: $after) {
       edges {
         node {
           id
@@ -41,7 +41,7 @@ export default function StarshipList() {
 
   if (error) throw new Error('Failed to load starships', { cause: error });
 
-  const starships = data?.allStarships;
+  const starships = data?.starships;
 
   if (!starships) notFound();
 

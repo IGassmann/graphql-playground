@@ -8,12 +8,13 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-	"github.com/IGassmann/graphql-playground/apps/api/graph/model"
 	"sort"
+
+	"github.com/IGassmann/graphql-playground/apps/api/graph/model"
 )
 
 // AllStarships is the resolver for the allStarships field.
-func (r *queryResolver) AllStarships(ctx context.Context, after *string, first *int, before *string, last *int) (*model.StarshipsConnection, error) {
+func (r *queryResolver) Starships(ctx context.Context, after *string, first *int, before *string, last *int) (*model.StarshipConnection, error) {
 	sortedStarships := make([]model.Starship, len(r.starships))
 	i := 0
 	for _, starship := range r.starships {
@@ -50,7 +51,7 @@ func (r *queryResolver) AllStarships(ctx context.Context, after *string, first *
 		endCursor = &edges[len(edges)-1].Cursor
 	}
 
-	return &model.StarshipsConnection{
+	return &model.StarshipConnection{
 		PageInfo: &model.PageInfo{
 			HasPreviousPage: hasPreviousPage(allEdges, before, after, first, last),
 			HasNextPage:     hasNextPage(allEdges, before, after, first, last),
@@ -58,7 +59,7 @@ func (r *queryResolver) AllStarships(ctx context.Context, after *string, first *
 			EndCursor:       endCursor,
 		},
 		Edges:      edges,
-		Starships:  nodes,
+		Nodes:      nodes,
 		TotalCount: intPtr(len(r.starships)),
 	}, nil
 }
@@ -81,6 +82,12 @@ func (r *Resolver) Query() QueryResolver { return &queryResolver{r} }
 
 type queryResolver struct{ *Resolver }
 
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
 func edgesToReturn(allEdges []*model.StarshipsEdge, before *string, after *string, first *int, last *int) ([]*model.StarshipsEdge, error) {
 	edges, err := applyCursorsToEdges(allEdges, before, after)
 	if err != nil {
@@ -109,7 +116,6 @@ func edgesToReturn(allEdges []*model.StarshipsEdge, before *string, after *strin
 
 	return edges, nil
 }
-
 func applyCursorsToEdges(allEdges []*model.StarshipsEdge, before *string, after *string) ([]*model.StarshipsEdge, error) {
 	edges := allEdges
 
@@ -150,7 +156,6 @@ func applyCursorsToEdges(allEdges []*model.StarshipsEdge, before *string, after 
 
 	return edges, nil
 }
-
 func hasPreviousPage(allEdges []*model.StarshipsEdge, before *string, after *string, first *int, last *int) bool {
 	if last != nil {
 		edges, err := applyCursorsToEdges(allEdges, before, after)
@@ -167,7 +172,6 @@ func hasPreviousPage(allEdges []*model.StarshipsEdge, before *string, after *str
 
 	return false
 }
-
 func hasNextPage(allEdges []*model.StarshipsEdge, before *string, after *string, first *int, last *int) bool {
 	if first != nil {
 		edges, err := applyCursorsToEdges(allEdges, before, after)
